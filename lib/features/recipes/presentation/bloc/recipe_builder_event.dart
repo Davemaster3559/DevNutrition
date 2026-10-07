@@ -7,6 +7,14 @@ sealed class RecipeBuilderEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class UpdateRecipePortionEvent extends RecipeBuilderEvent {
+  final String kind;
+  final String portionUnit;
+  const UpdateRecipePortionEvent(this.kind, this.portionUnit);
+  @override
+  List<Object?> get props => [kind, portionUnit];
+}
+
 class InitializeBuilderEvent extends RecipeBuilderEvent {
   final RecipeEntity? existing;
   const InitializeBuilderEvent({this.existing});
@@ -48,31 +56,35 @@ class UpdateTagsEvent extends RecipeBuilderEvent {
 }
 
 class AddIngredientEvent extends RecipeBuilderEvent {
+  final double? convertedAmountG;
   final MealEntity meal;
   final double amount;
   final String unit;
   const AddIngredientEvent({
+    this.convertedAmountG,
     required this.meal,
     required this.amount,
     required this.unit,
   });
 
   @override
-  List<Object?> get props => [meal, amount, unit];
+  List<Object?> get props => [meal, amount, unit, convertedAmountG];
 }
 
 class UpdateIngredientEvent extends RecipeBuilderEvent {
+  final double? convertedAmountG;
   final int index;
   final double amount;
   final String unit;
   const UpdateIngredientEvent({
+    this.convertedAmountG,
     required this.index,
     required this.amount,
     required this.unit,
   });
 
   @override
-  List<Object?> get props => [index, amount, unit];
+  List<Object?> get props => [index, amount, unit, convertedAmountG];
 }
 
 class RemoveIngredientEvent extends RecipeBuilderEvent {

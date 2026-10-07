@@ -1,3 +1,4 @@
+import 'package:opennutritracker/core/utils/calc/day_boundary_calc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get_it/get_it.dart';
 import 'package:opennutritracker/core/data/data_source/config_data_source.dart';
@@ -134,6 +135,10 @@ import 'package:opennutritracker/features/settings/presentation/bloc/custom_meal
 import 'package:opennutritracker/features/settings/presentation/bloc/export_import_bloc.dart';
 import 'package:opennutritracker/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:opennutritracker/features/quick_log/data/local_food_catalogue.dart';
+import 'package:opennutritracker/features/quick_log/data/quick_log_repository.dart';
+import 'package:opennutritracker/features/quick_log/data/devnutrition_backup.dart';
+import 'package:opennutritracker/features/quick_log/domain/devnutrition_preferences.dart';
 
 final locator = GetIt.instance;
 
@@ -193,16 +198,24 @@ Future<void> initLocator() async {
   );
 
   // Backend
-  await Supabase.initialize(
-    url: Env.supabaseProjectUrl,
-    publishableKey: Env.supabaseProjectAnonKey,
-    // In debug builds supabase_flutter attaches its own printer to the
-    // shared root log stream (hierarchical logging is off), duplicating
-    // every app log line in a second format. LoggerConfig already prints
-    // everything — including supabase records — once.
-    debug: false,
-  );
-  locator.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
+  final backendUrl = Uri.tryParse(Env.supabaseProjectUrl);
+  if (backendUrl != null &&
+      backendUrl.scheme == 'https' &&
+      backendUrl.host.isNotEmpty &&
+      Env.supabaseProjectAnonKey != 'ANON_KEY') {
+    await Supabase.initialize(
+      url: Env.supabaseProjectUrl,
+      publishableKey: Env.supabaseProjectAnonKey,
+      // In debug builds supabase_flutter attaches its own printer to the
+      // shared root log stream (hierarchical logging is off), duplicating
+      // every app log line in a second format. LoggerConfig already prints
+      // everything — including supabase records — once.
+      debug: false,
+    );
+    locator.registerLazySingleton<SupabaseClient>(
+      () => Supabase.instance.client,
+    );
+  }
 
   // Notification service (#312)
   locator.registerLazySingleton<NotificationService>(
@@ -216,7 +229,12 @@ Future<void> initLocator() async {
 
   // BLoCs
   locator.registerLazySingleton<OnboardingBloc>(
-    () => OnboardingBloc(locator(), locator(), locator()),
+    () => OnboardingBloc(
+      locator(),
+      locator(),
+      locator(),
+      personalGoals: const DevNutritionPreferences(),
+    ),
   );
   locator.registerLazySingleton<HomeBloc>(
     () => HomeBloc(
@@ -394,6 +412,7 @@ Future<void> initLocator() async {
       locator(),
       locator(),
       locator(),
+      locator<LocalFoodCatalogue>(),
     ),
   );
   // Per-navigation, matching how the AddMeal / Products / Food blocs that
@@ -459,7 +478,7 @@ Future<void> initLocator() async {
     () => GetTrackedDayUsecase(locator()),
   );
   locator.registerLazySingleton<AddTrackedDayUsecase>(
-    () => AddTrackedDayUsecase(locator()),
+    () => AddTrackedDayUsecase(locator(), locator()),
   );
   locator.registerLazySingleton<GetWeightLogUsecase>(
     () => GetWeightLogUsecase(locator()),
@@ -495,6 +514,7 @@ Future<void> initLocator() async {
       locator(),
       locator(),
       locator(),
+      devNutritionBackup: DevNutritionBackup(hiveDBProvider),
     ),
   );
   locator.registerLazySingleton(
@@ -505,6 +525,38 @@ Future<void> initLocator() async {
       locator(),
       locator(),
       locator(),
+      devNutritionBackup: DevNutritionBackup(hiveDBProvider),
+      afterImport: () async {
+        final quickLog = locator<QuickLogRepository>();
+        final days = <DateTime>{
+          for (final day
+              in await locator<TrackedDayRepository>().getAllTrackedDaysDBO())
+            day.day,
+          for (final entry
+              in await locator<IntakeRepository>().getAllIntakesDBO())
+            entry.dateTime,
+        };
+        final config = await locator<GetConfigUsecase>().getConfig();
+        final offset = DayBoundaryCalc.totalMinutesOf(
+          config.dayStartOffsetHours,
+          config.dayStartOffsetMinutes,
+        );
+        final labels = days
+            .map(
+              (day) =>
+                  day.hour == 0 &&
+                      day.minute == 0 &&
+                      day.second == 0 &&
+                      day.millisecond == 0 &&
+                      day.microsecond == 0
+                  ? day
+                  : DayBoundaryCalc.logicalDayOfMinutes(day, offset),
+            )
+            .toSet();
+        for (final day in labels) {
+          await quickLog.reconcile(day);
+        }
+      },
     ),
   );
   locator.registerLazySingleton(() => ImportMealsCsvUsecase(locator()));
@@ -631,6 +683,20 @@ Future<void> initLocator() async {
   locator.registerLazySingleton<HealthService>(() => healthService);
 
   await ensureConfigInitialized(locator());
+  locator.registerLazySingleton<LocalFoodCatalogue>(() => LocalFoodCatalogue());
+  locator.registerLazySingleton<QuickLogRepository>(
+    () => QuickLogRepository(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
+  );
+  await locator<QuickLogRepository>().seed();
   // Before any screen reads the intake log: brings Open Food Facts rows a
   // released build wrote in raw grams into the app's units (#1152).
   await ensureOffMicronutrientsRepaired(hiveDBProvider);

@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:opennutritracker/core/domain/entity/intake_type_entity.dart';
 import 'package:opennutritracker/core/domain/entity/recipe_entity.dart';
-import 'package:opennutritracker/core/domain/usecase/get_config_usecase.dart';
 import 'package:opennutritracker/core/presentation/widgets/share_qr_dialog.dart';
 import 'package:opennutritracker/core/styles/app_palette.dart';
 import 'package:opennutritracker/core/styles/dimens.dart';
 import 'package:opennutritracker/core/utils/locator.dart';
 import 'package:opennutritracker/core/utils/navigation_options.dart';
-import 'package:opennutritracker/features/meal_detail/meal_detail_screen.dart';
+import 'package:opennutritracker/features/quick_log/presentation/meal_log_sheet.dart';
 import 'package:opennutritracker/features/recipes/domain/entity/shared_recipe_payload.dart';
 import 'package:opennutritracker/features/recipes/presentation/bloc/recipe_detail_bloc.dart';
 import 'package:opennutritracker/features/recipes/presentation/screens/recipe_builder_screen.dart';
@@ -45,8 +44,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     super.didChangeDependencies();
     if (!_initialized) {
       _initialized = true;
-      final args = ModalRoute.of(context)?.settings.arguments
-          as RecipeDetailArguments;
+      final args =
+          ModalRoute.of(context)?.settings.arguments as RecipeDetailArguments;
       _bloc.add(LoadRecipeEvent(args.recipeId));
     }
   }
@@ -64,9 +63,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         if (state is RecipeDetailLoaded) {
           return _buildLoaded(context, state.recipe);
         }
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
       },
     );
   }
@@ -83,7 +80,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             tooltip: S.of(context).shareRecipeLabel,
             icon: const Icon(Icons.share_outlined),
             onPressed: () {
-              final code = SharedRecipePayload.fromRecipe(recipe).toJsonString();
+              final code = SharedRecipePayload.fromRecipe(
+                recipe,
+              ).toJsonString();
               showDialog(
                 context: context,
                 builder: (_) => ShareQrDialog(
@@ -153,9 +152,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: Dimens.spacing8),
-          ...recipe.ingredients.map(
-            (i) => IngredientListItem(ingredient: i),
-          ),
+          ...recipe.ingredients.map((i) => IngredientListItem(ingredient: i)),
           const SizedBox(height: Dimens.spacing24),
           SizedBox(
             width: double.infinity,
@@ -187,10 +184,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         // user can rename before saving — common workflow is "tweak one
         // ingredient and save as new".
         final suffix = S.of(context).duplicateRecipeNameSuffix;
-        final draft = recipe.copyWith(
-          id: '',
-          name: '${recipe.name} $suffix',
-        );
+        final draft = recipe.copyWith(id: '', name: '${recipe.name} $suffix');
         // copyWith on RecipeEntity always carries the id forward; we want a
         // fresh one. The builder treats an empty id as a "create new"
         // sentinel: it generates a UUID at save time.
@@ -205,6 +199,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           updatedAt: DateTime.now(),
           servingsCount: draft.servingsCount,
           tags: draft.tags,
+          kind: draft.kind,
+          portionUnit: draft.portionUnit,
         );
         await Navigator.of(context).pushNamed(
           NavigationOptions.recipeBuilderRoute,
@@ -242,16 +238,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Future<void> _onLogPressed(BuildContext context, RecipeEntity recipe) async {
     final intakeType = await _pickIntakeType(context);
     if (intakeType == null || !context.mounted) return;
-    final config = await locator<GetConfigUsecase>().getConfig();
-    if (!context.mounted) return;
-    Navigator.of(context).pushNamed(
-      NavigationOptions.mealDetailRoute,
-      arguments: MealDetailScreenArguments(
-        recipe.toMealEntity(),
-        intakeType,
-        DateTime.now(),
-        config.usesImperialFoodUnits,
-      ),
+    await showDevMealLog(
+      context,
+      recipe.toMealEntity(),
+      recipe: recipe,
+      type: intakeType,
     );
   }
 
@@ -276,7 +267,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             ),
             title: Text(
               label,
-              style: Theme.of(ctx).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(
+                ctx,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             onTap: () => Navigator.of(ctx).pop(type),
           );

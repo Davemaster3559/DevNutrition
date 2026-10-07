@@ -6,6 +6,7 @@ import 'package:opennutritracker/core/domain/entity/calories_profile_entity.dart
 import 'package:opennutritracker/core/domain/entity/user_gender_entity.dart';
 
 class ConfigEntity extends Equatable {
+  final String? devNutritionJson;
   // #150: keys for the per-meal kcal share map. Kept as plain strings rather
   // than tied to IntakeTypeEntity so the persisted value stays stable across
   // any future enum renames.
@@ -270,6 +271,7 @@ class ConfigEntity extends Equatable {
     this.legacyHealthDeletedExternalIds = const <String>{},
     this.policyNoticeRevisionSeen = 0,
     this.defaultToRawFoodUnits = false,
+    this.devNutritionJson,
   });
 
   /// The multiplier the importer actually applies. Falls back to crediting
@@ -392,6 +394,7 @@ class ConfigEntity extends Equatable {
         ? Set<String>.from(dbo.healthDeletedExternalIds!)
         : const <String>{},
     defaultToRawFoodUnits: dbo.defaultToRawFoodUnits ?? false,
+    devNutritionJson: dbo.devNutritionJson,
   );
 
   /// Returns the recommended kcal target for [mealKey] given a daily goal.
@@ -497,5 +500,6 @@ class ConfigEntity extends Equatable {
     legacyHealthDeletedExternalIds,
     policyNoticeRevisionSeen,
     defaultToRawFoodUnits,
+    devNutritionJson,
   ];
 }

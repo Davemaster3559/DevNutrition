@@ -1,0 +1,462 @@
+[
+  {
+    "id": "dev:banana-shake",
+    "name": "Dev banana protein shake",
+    "kind": "preset",
+    "servings": 1,
+    "portionUnit": "serving",
+    "description": "300 ml 3.5% milk, 1 medium banana, 1 scoop Revolution whey (147 kcal / 25 g protein). Ingredient weights and nutrition are editable. Fruit pieces use USDA edible-weight estimates; product references should be checked against your labels. No added oil is assumed.",
+    "ingredients": [
+      {
+        "code": "dev:milk35",
+        "amount": 300
+      },
+      {
+        "code": "173944",
+        "amount": 118
+      },
+      {
+        "code": "dev:whey",
+        "amount": 37
+      }
+    ]
+  },
+  {
+    "id": "dev:oats",
+    "name": "Dev protein overnight oats",
+    "kind": "preset",
+    "servings": 1,
+    "portionUnit": "serving",
+    "description": "Cranberries use the midpoint 12.5 g of your 10–15 g range. Optional prebiotic, cinnamon and cocoa can be added with their actual amounts. Ingredient weights and nutrition are editable. Fruit pieces use USDA edible-weight estimates; product references should be checked against your labels. No added oil is assumed.",
+    "ingredients": [
+      {
+        "code": "169705",
+        "amount": 60
+      },
+      {
+        "code": "170554",
+        "amount": 10
+      },
+      {
+        "code": "169414",
+        "amount": 5
+      },
+      {
+        "code": "171723",
+        "amount": 12.5
+      },
+      {
+        "code": "dev:whey",
+        "amount": 37
+      },
+      {
+        "code": "171265",
+        "amount": 200
+      }
+    ]
+  },
+  {
+    "id": "dev:fruit-a",
+    "name": "Dev Fruit Bowl A",
+    "kind": "preset",
+    "servings": 1,
+    "portionUnit": "serving",
+    "description": "1 medium peach and 1/2 kiwi. Optional sweetener and cinnamon. Ingredient weights and nutrition are editable. Fruit pieces use USDA edible-weight estimates; product references should be checked against your labels. No added oil is assumed.",
+    "ingredients": [
+      {
+        "code": "dev:oikos",
+        "amount": 200
+      },
+      {
+        "code": "169928",
+        "amount": 150
+      },
+      {
+        "code": "167762",
+        "amount": 100
+      },
+      {
+        "code": "168153",
+        "amount": 34.5
+      },
+      {
+        "code": "167765",
+        "amount": 100
+      },
+      {
+        "code": "174683",
+        "amount": 40
+      },
+      {
+        "code": "171711",
+        "amount": 50
+      }
+    ]
+  },
+  {
+    "id": "dev:fruit-b",
+    "name": "Dev Fruit Bowl B",
+    "kind": "preset",
+    "servings": 1,
+    "portionUnit": "serving",
+    "description": "1/2 Granny Smith apple, 1 small orange, 1 plum. Swap the apple for Ambrosia in the editor. Ingredient weights and nutrition are editable. Fruit pieces use USDA edible-weight estimates; product references should be checked against your labels. No added oil is assumed.",
+    "ingredients": [
+      {
+        "code": "dev:oikos",
+        "amount": 200
+      },
+      {
+        "code": "168203",
+        "amount": 83.5
+      },
+      {
+        "code": "169097",
+        "amount": 96
+      },
+      {
+        "code": "169949",
+        "amount": 66
+      },
+      {
+        "code": "169092",
+        "amount": 100
+      },
+      {
+        "code": "167762",
+        "amount": 75
+      },
+      {
+        "code": "174683",
+        "amount": 40
+      }
+    ]
+  },
+  {
+    "id": "dev:fruit-old",
+    "name": "Dev fruit bowl · older version",
+    "kind": "preset",
+    "servings": 1,
+    "portionUnit": "serving",
+    "description": "Older meal option only; this does not change your daily goals. Ingredient weights and nutrition are editable. Fruit pieces use USDA edible-weight estimates; product references should be checked against your labels. No added oil is assumed.",
+    "ingredients": [
+      {
+        "code": "dev:oikos",
+        "amount": 200
+      },
+      {
+        "code": "168203",
+        "amount": 83.5
+      },
+      {
+        "code": "168153",
+        "amount": 34.5
+      },
+      {
+        "code": "169949",
+        "amount": 66
+      },
+      {
+        "code": "169097",
+        "amount": 131
+      },
+      {
+        "code": "169092",
+        "amount": 50
+      },
+      {
+        "code": "167765",
+        "amount": 50
+      },
+      {
+        "code": "174683",
+        "amount": 30
+      }
+    ]
+  },
+  {
+    "id": "dev:tofu-tikka",
+    "name": "Dev air-fryer tofu tikka",
+    "kind": "preset",
+    "servings": 1,
+    "portionUnit": "serving",
+    "description": "1/2 tsp each garam/tikka masala, cumin and garlic powder (gram estimates). Add lemon, chilli and salt to taste; weigh meaningful additions. Ingredient weights and nutrition are editable. Fruit pieces use USDA edible-weight estimates; product references should be checked against your labels. No added oil is assumed.",
+    "ingredients": [
+      {
+        "code": "172475",
+        "amount": 200
+      },
+      {
+        "code": "170108",
+        "amount": 100
+      },
+      {
+        "code": "170000",
+        "amount": 75
+      },
+      {
+        "code": "170457",
+        "amount": 100
+      },
+      {
+        "code": "171284",
+        "amount": 60
+      },
+      {
+        "code": "dev:sour5",
+        "amount": 15
+      },
+      {
+        "code": "indb:BFP001",
+        "amount": 1
+      },
+      {
+        "code": "170923",
+        "amount": 1.05
+      },
+      {
+        "code": "171325",
+        "amount": 1.55
+      }
+    ]
+  },
+  {
+    "id": "dev:soya-masala",
+    "name": "Dev soya tomato dahi masala",
+    "kind": "preset",
+    "servings": 1,
+    "portionUnit": "serving",
+    "description": "Soya is measured DRY before soaking. 1/2 tsp each cumin, garam masala and garlic powder. Ingredient weights and nutrition are editable. Fruit pieces use USDA edible-weight estimates; product references should be checked against your labels. No added oil is assumed.",
+    "ingredients": [
+      {
+        "code": "dev:soya",
+        "amount": 60
+      },
+      {
+        "code": "170108",
+        "amount": 100
+      },
+      {
+        "code": "170457",
+        "amount": 100
+      },
+      {
+        "code": "170000",
+        "amount": 50
+      },
+      {
+        "code": "171284",
+        "amount": 60
+      },
+      {
+        "code": "dev:sour5",
+        "amount": 15
+      },
+      {
+        "code": "170923",
+        "amount": 1.05
+      },
+      {
+        "code": "indb:BFP001",
+        "amount": 1
+      },
+      {
+        "code": "171325",
+        "amount": 1.55
+      }
+    ]
+  },
+  {
+    "id": "dev:soya-chaat",
+    "name": "Dev spicy soya dahi chaat",
+    "kind": "preset",
+    "servings": 1,
+    "portionUnit": "serving",
+    "description": "With 1 medium peach and 100 g strawberries. Cilantro, green chilli, lemon, black pepper and salt to taste. 1/2 tsp cumin and chaat masala. Ingredient weights and nutrition are editable. Fruit pieces use USDA edible-weight estimates; product references should be checked against your labels. No added oil is assumed.",
+    "ingredients": [
+      {
+        "code": "dev:soya",
+        "amount": 35
+      },
+      {
+        "code": "170894",
+        "amount": 150
+      },
+      {
+        "code": "168409",
+        "amount": 100
+      },
+      {
+        "code": "170457",
+        "amount": 75
+      },
+      {
+        "code": "170000",
+        "amount": 35
+      },
+      {
+        "code": "170923",
+        "amount": 1.05
+      },
+      {
+        "code": "indb:BFP002",
+        "amount": 1
+      },
+      {
+        "code": "169928",
+        "amount": 150
+      },
+      {
+        "code": "167762",
+        "amount": 100
+      }
+    ]
+  },
+  {
+    "id": "dev:tofu-salad",
+    "name": "Dev crispy tofu salad",
+    "kind": "preset",
+    "servings": 1,
+    "portionUnit": "serving",
+    "description": "With dahi and 5% sour cream dressing. Add soy/chilli sauce, lemon and garlic with their actual amounts. Ingredient weights and nutrition are editable. Fruit pieces use USDA edible-weight estimates; product references should be checked against your labels. No added oil is assumed.",
+    "ingredients": [
+      {
+        "code": "172475",
+        "amount": 200
+      },
+      {
+        "code": "168462",
+        "amount": 60
+      },
+      {
+        "code": "169247",
+        "amount": 90
+      },
+      {
+        "code": "168409",
+        "amount": 150
+      },
+      {
+        "code": "170457",
+        "amount": 90
+      },
+      {
+        "code": "170108",
+        "amount": 75
+      },
+      {
+        "code": "171284",
+        "amount": 60
+      },
+      {
+        "code": "dev:sour5",
+        "amount": 15
+      }
+    ]
+  },
+  {
+    "id": "dev:tofu-chaat",
+    "name": "Dev tofu yogurt chaat",
+    "kind": "preset",
+    "servings": 1,
+    "portionUnit": "serving",
+    "description": "With cantaloupe, blueberries and strawberries; 1/2 tsp chaat masala and cumin. Ingredient weights and nutrition are editable. Fruit pieces use USDA edible-weight estimates; product references should be checked against your labels. No added oil is assumed.",
+    "ingredients": [
+      {
+        "code": "172475",
+        "amount": 150
+      },
+      {
+        "code": "170894",
+        "amount": 150
+      },
+      {
+        "code": "168409",
+        "amount": 100
+      },
+      {
+        "code": "170457",
+        "amount": 75
+      },
+      {
+        "code": "170000",
+        "amount": 35
+      },
+      {
+        "code": "indb:BFP002",
+        "amount": 1
+      },
+      {
+        "code": "170923",
+        "amount": 1.05
+      },
+      {
+        "code": "169092",
+        "amount": 100
+      },
+      {
+        "code": "171711",
+        "amount": 75
+      },
+      {
+        "code": "167762",
+        "amount": 50
+      }
+    ]
+  },
+  {
+    "id": "dev:chilli-soya",
+    "name": "Dev crispy chilli soya",
+    "kind": "preset",
+    "servings": 1,
+    "portionUnit": "serving",
+    "description": "1 tsp soy sauce and 1/2 tsp garlic powder. Optional 8 g cornstarch can be added in the editor. Ingredient weights and nutrition are editable. Fruit pieces use USDA edible-weight estimates; product references should be checked against your labels. No added oil is assumed.",
+    "ingredients": [
+      {
+        "code": "dev:soya",
+        "amount": 50
+      },
+      {
+        "code": "170108",
+        "amount": 100
+      },
+      {
+        "code": "170000",
+        "amount": 50
+      },
+      {
+        "code": "170457",
+        "amount": 100
+      },
+      {
+        "code": "171284",
+        "amount": 60
+      },
+      {
+        "code": "dev:sour5",
+        "amount": 15
+      },
+      {
+        "code": "174277",
+        "amount": 5.3
+      },
+      {
+        "code": "171325",
+        "amount": 1.55
+      }
+    ]
+  },
+  {
+    "id": "dev:whey-water",
+    "name": "Dev whey with water",
+    "kind": "preset",
+    "servings": 1,
+    "portionUnit": "serving",
+    "description": "1 scoop = 147 kcal / 25 g protein. Use 1.25 servings for 1.25 scoops. Water adds no calories. Ingredient weights and nutrition are editable. Fruit pieces use USDA edible-weight estimates; product references should be checked against your labels. No added oil is assumed.",
+    "ingredients": [
+      {
+        "code": "dev:whey",
+        "amount": 37
+      }
+    ]
+  }
+]

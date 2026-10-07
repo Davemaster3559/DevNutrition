@@ -12,6 +12,8 @@ import 'package:opennutritracker/core/styles/dimens.dart';
 import 'package:opennutritracker/core/utils/energy_display.dart';
 import 'package:opennutritracker/core/utils/locator.dart';
 import 'package:opennutritracker/core/utils/user_image_storage.dart';
+import 'package:opennutritracker/features/quick_log/presentation/diary_entry_actions.dart';
+import 'package:opennutritracker/generated/l10n.dart';
 
 /// A logged intake, rendered as a full-width row: a rounded thumbnail, the meal
 /// name and amount, and the energy on the trailing edge. Replaces the old
@@ -69,18 +71,30 @@ class IntakeCard extends StatelessWidget {
                     children: [
                       AutoSizeText(
                         intake.meal.name ?? "?",
-                        style: textTheme.titleSmall?.copyWith(color: palette.textStrong),
+                        style: textTheme.titleSmall?.copyWith(
+                          color: palette.textStrong,
+                        ),
                         maxLines: 1,
                         minFontSize: 11,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 2),
-                      MealValueUnitText(
-                        value: intake.amount,
-                        meal: intake.meal,
-                        usesImperialUnits: usesImperialUnits,
-                        textStyle: textTheme.bodySmall?.copyWith(color: palette.textMuted),
-                      ),
+                      if (intake.displayUnit != null)
+                        Text(
+                          '${intake.displayedAmount.toStringAsFixed(2).replaceFirst(RegExp(r'\.?0+$'), '')} ${intake.displayUnit}',
+                          style: textTheme.bodySmall?.copyWith(
+                            color: palette.textMuted,
+                          ),
+                        )
+                      else
+                        MealValueUnitText(
+                          value: intake.amount,
+                          meal: intake.meal,
+                          usesImperialUnits: usesImperialUnits,
+                          textStyle: textTheme.bodySmall?.copyWith(
+                            color: palette.textMuted,
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -90,6 +104,41 @@ class IntakeCard extends StatelessWidget {
                   style: textTheme.labelMedium?.copyWith(
                     color: palette.textStrong,
                     fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Semantics(
+                  identifier: 'diary-entry-menu',
+                  child: PopupMenuButton<String>(
+                    tooltip: S.of(context).devMore,
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        onTappedItem(context, usesImperialUnits);
+                      } else {
+                        devEntryAction(context, intake, value);
+                      }
+                    },
+                    itemBuilder: (_) => [
+                      PopupMenuItem(
+                        value: 'edit',
+                        child: Text(S.of(context).devEdit),
+                      ),
+                      PopupMenuItem(
+                        value: 'again',
+                        child: Text(S.of(context).devDuplicate),
+                      ),
+                      PopupMenuItem(
+                        value: 'copy',
+                        child: Text(S.of(context).devCopyTomorrow),
+                      ),
+                      PopupMenuItem(
+                        value: 'move',
+                        child: Text(S.of(context).devMove),
+                      ),
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Text(S.of(context).devDelete),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -144,9 +193,9 @@ class _Thumbnail extends StatelessWidget {
   }
 
   Widget _fallback() => Container(
-        color: palette.surfaceMuted,
-        child: Icon(Icons.restaurant_rounded, color: palette.textMuted, size: 24),
-      );
+    color: palette.surfaceMuted,
+    child: Icon(Icons.restaurant_rounded, color: palette.textMuted, size: 24),
+  );
 }
 
 class _LocalMealImage extends StatelessWidget {

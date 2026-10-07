@@ -55,6 +55,11 @@ class RecipeDBO extends HiveObject {
   @HiveField(11)
   final String? imagePath;
 
+  @HiveField(12)
+  final String? kind;
+  @HiveField(13)
+  final String? portionUnit;
+
   RecipeDBO({
     required this.id,
     required this.name,
@@ -67,6 +72,8 @@ class RecipeDBO extends HiveObject {
     required this.servingsCount,
     required this.tags,
     required this.imagePath,
+    this.kind,
+    this.portionUnit,
   });
 
   factory RecipeDBO.fromJson(Map<String, dynamic> json) =>

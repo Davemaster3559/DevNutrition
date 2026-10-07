@@ -204,34 +204,112 @@
   "additionalInfoLabelCustom": "Custom Meal Item",
   "additionalInfoLabelFDC": "More Information at\nFoodData Central",
   "additionalInfoLabelSource": "More Information at\n{sourceName}",
-  "@additionalInfoLabelSource": {"placeholders": {"sourceName": {"type": "String"}}},
+  "@additionalInfoLabelSource": {
+    "placeholders": {
+      "sourceName": {
+        "type": "String"
+      }
+    }
+  },
   "foodSourcesAlwaysEnabledLabel": "Always enabled",
   "foodSourcesHelpText": "Search results come from these food databases. Open Food Facts powers the product and barcode search and is always enabled.",
   "machineTranslatedNameHint": "Name translated automatically",
   "measureUnitBar": "{count, plural, one{bar} other{bars}}",
-  "@measureUnitBar": {"placeholders": {"count": {"type": "num"}}},
+  "@measureUnitBar": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "measureUnitBottle": "{count, plural, one{bottle} other{bottles}}",
-  "@measureUnitBottle": {"placeholders": {"count": {"type": "num"}}},
+  "@measureUnitBottle": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "measureUnitCan": "{count, plural, one{can} other{cans}}",
-  "@measureUnitCan": {"placeholders": {"count": {"type": "num"}}},
+  "@measureUnitCan": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "measureUnitCup": "{count, plural, one{cup} other{cups}}",
-  "@measureUnitCup": {"placeholders": {"count": {"type": "num"}}},
+  "@measureUnitCup": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "measureUnitEgg": "{count, plural, one{egg} other{eggs}}",
-  "@measureUnitEgg": {"placeholders": {"count": {"type": "num"}}},
+  "@measureUnitEgg": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "measureUnitPackage": "{count, plural, one{package} other{packages}}",
-  "@measureUnitPackage": {"placeholders": {"count": {"type": "num"}}},
+  "@measureUnitPackage": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "measureUnitPiece": "{count, plural, one{piece} other{pieces}}",
-  "@measureUnitPiece": {"placeholders": {"count": {"type": "num"}}},
+  "@measureUnitPiece": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "measureUnitPortion": "{count, plural, one{portion} other{portions}}",
-  "@measureUnitPortion": {"placeholders": {"count": {"type": "num"}}},
+  "@measureUnitPortion": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "measureUnitServing": "{count, plural, one{serving} other{servings}}",
-  "@measureUnitServing": {"placeholders": {"count": {"type": "num"}}},
+  "@measureUnitServing": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "measureUnitSlice": "{count, plural, one{slice} other{slices}}",
-  "@measureUnitSlice": {"placeholders": {"count": {"type": "num"}}},
+  "@measureUnitSlice": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "measureUnitTablespoon": "{count, plural, one{tablespoon} other{tablespoons}}",
-  "@measureUnitTablespoon": {"placeholders": {"count": {"type": "num"}}},
+  "@measureUnitTablespoon": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "measureUnitTeaspoon": "{count, plural, one{teaspoon} other{teaspoons}}",
-  "@measureUnitTeaspoon": {"placeholders": {"count": {"type": "num"}}},
+  "@measureUnitTeaspoon": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "settingsFoodSourcesLabel": "Food databases",
   "settingsFoodSourcesSubtitle": "Choose where food search results come from",
   "onboardingOtherOptionsLabel": "Other options",
@@ -242,11 +320,17 @@
   "ageLabel": "Age",
   "allItemsLabel": "All",
   "alphaVersionName": "[Alpha]",
-  "appDescription": "OpenNutriTracker is a free and open-source calorie and nutrient tracker that respects your privacy.",
+  "appDescription": "DevNutrition is a free and open-source calorie and nutrient tracker that respects your privacy.",
   "appLicenseLabel": "GPL-3.0 license",
-  "appTitle": "OpenNutriTracker",
+  "appTitle": "DevNutrition",
   "appVersionName": "Version {versionNumber}",
-  "@appVersionName": {"placeholders": {"versionNumber": {"type": "String"}}},
+  "@appVersionName": {
+    "placeholders": {
+      "versionNumber": {
+        "type": "String"
+      }
+    }
+  },
   "barcodeInvalidEan13CheckDigit": "This 13-digit barcode looks miskeyed: its last digit doesn't match the rest",
   "baseQuantityLabel": "Nutrition is per",
   "bmiInfo": "Body Mass Index (BMI) is a index to classify overweight and obesity in adults. It is defined as weight in kilograms divided by the square of height in meters (kg/m²).\n\nBMI does not differentiate between fat and muscle mass and can be misleading for some individuals.",
@@ -265,7 +349,13 @@
   "calciumLabel": "calcium",
   "calculationsMacronutrientsDistributionLabel": "Macros distribution",
   "calculationsMacrosDistribution": "{pctCarbs}% carbs, {pctFats}% fats, {pctProteins}% proteins",
-  "@calculationsMacrosDistribution": {"placeholders": {"pctCarbs": {}, "pctFats": {}, "pctProteins": {}}},
+  "@calculationsMacrosDistribution": {
+    "placeholders": {
+      "pctCarbs": {},
+      "pctFats": {},
+      "pctProteins": {}
+    }
+  },
   "calculationsRecommendedLabel": "(recommended)",
   "calculationsTDEEIOM2006Label": "Institute of Medicine Equation (2005)",
   "calculationsTDEELabel": "TDEE equation",
@@ -317,7 +407,7 @@
   "customMealFormAdvancedHelp": "Set the sizes and per-100 values for precise scaling.",
   "customMealFormModeLabel": "Form view",
   "customMealFormSimple": "Simple",
-  "customMealFormSimpleHelp": "Type the totals for one serving.",
+  "customMealFormSimpleHelp": "Enter nutrition per serving. Leave unknown fields blank; enter 0 only when the label reports zero. Use Advanced for a label with a known serving weight or volume.",
   "customMealFormSimpleFieldHelper": "{unit} in one serving",
   "@customMealFormSimpleFieldHelper": {
     "placeholders": {
@@ -382,7 +472,7 @@
   "discardChangesContent": "Your unsaved changes will be lost.",
   "discardChangesTitle": "Discard changes?",
   "disclaimerAcknowledgeLabel": "I understand",
-  "disclaimerText": "OpenNutriTracker is not a medical application. All data provided is not validated and should be used with caution. Please maintain a healthy lifestyle and consult a professional if you have any problems. Use during illness, pregnancy or lactation is not recommended. For the peer-reviewed sources behind each calculation, tap the info icon on the Home or Profile screen.",
+  "disclaimerText": "DevNutrition is not a medical application. All data provided is not validated and should be used with caution. Please maintain a healthy lifestyle and consult a professional if you have any problems. Use during illness, pregnancy or lactation is not recommended. For the peer-reviewed sources behind each calculation, tap the info icon on the Home or Profile screen.",
   "downloadSampleCsvAction": "Sample meals (csv)",
   "downloadSampleJsonAction": "Sample meals (json)",
   "downloadSampleRecipesCsvAction": "Sample recipes (csv)",
@@ -409,7 +499,7 @@
   "exportImportCsvRecipesNote": "CSV keeps your activity, meal log and tracked days. Recipes and any photos you've attached are JSON-only — switch to JSON if you want them in your backup.",
   "exportImportDescription": "You can export the app data to a zip file and import it later. This is useful if you want to backup your data or transfer it to another device.\n\nThe app does not use any cloud service to store your data.",
   "exportImportErrorLabel": "Export / Import error",
-  "exportImportErrorUnreadableLabel": "The selected file could not be read. Choose the .zip backup that OpenNutriTracker exported.",
+  "exportImportErrorUnreadableLabel": "The selected file could not be read. Choose the .zip backup that DevNutrition exported.",
   "exportImportErrorWriteFailedLabel": "The file could not be saved to the chosen location. Try a different folder.",
   "exportImportSuccessLabel": "Export / Import successful",
   "fatLabel": "fat",
@@ -555,7 +645,7 @@
   "notificationsDailyReminderBody": "Don't forget to log your meals today!",
   "notificationsDailyReminderChannelName": "Daily Reminders",
   "notificationsDailyReminderChannelDescription": "Daily meal logging reminder",
-  "notificationsDailyReminderTitle": "OpenNutriTracker",
+  "notificationsDailyReminderTitle": "DevNutrition",
   "notificationsPermissionDeniedSnack": "Notification permission denied.",
   "nutrientPanelAllHiddenLabel": "All nutrients hidden — turn some on in Settings → Nutrients.",
   "nutrientPanelLimitLabel": "limit",
@@ -570,7 +660,13 @@
   "nutritionalStatusRiskAverage": "Average",
   "nutritionalStatusRiskIncreased": "Increased",
   "nutritionalStatusRiskLabel": "Risk of comorbidities: {riskValue}",
-  "@nutritionalStatusRiskLabel": {"placeholders": {"riskValue": {"type": "String"}}},
+  "@nutritionalStatusRiskLabel": {
+    "placeholders": {
+      "riskValue": {
+        "type": "String"
+      }
+    }
+  },
   "nutritionalStatusRiskLow": "Low \n(but risk of other \nclinical problems increased)",
   "nutritionalStatusRiskModerate": "Moderate",
   "nutritionalStatusRiskSevere": "Severe",
@@ -592,27 +688,72 @@
   "onboardingGenderQuestionSubtitle": "What's your gender?",
   "onboardingGoalQuestionSubtitle": "What's your current weight goal?",
   "onboardingFoodSourcesEnabledCount": "{enabled} of {total} enabled",
-  "@onboardingFoodSourcesEnabledCount": {"placeholders": {"enabled": {"type": "int"}, "total": {"type": "int"}}},
+  "@onboardingFoodSourcesEnabledCount": {
+    "placeholders": {
+      "enabled": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "onboardingGoalSuggestedBadge": "Suggested",
   "onboardingGoalSuggestionBmi": "Your BMI is {bmi} — WHO: {status}.",
-  "@onboardingGoalSuggestionBmi": {"placeholders": {"bmi": {"type": "String"}, "status": {"type": "String"}}},
+  "@onboardingGoalSuggestionBmi": {
+    "placeholders": {
+      "bmi": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
   "onboardingGoalSuggestionTarget": "Based on the target weight you entered.",
   "onboardingHeightExampleHintCm": "e.g. 170",
   "onboardingHeightExampleHintFt": "e.g. 5.8",
   "onboardingHeightQuestionSubtitle": "What's your current height?",
   "onboardingHealthyRangeApply": "Use {weight}",
-  "@onboardingHealthyRangeApply": {"placeholders": {"weight": {"type": "String"}}},
+  "@onboardingHealthyRangeApply": {
+    "placeholders": {
+      "weight": {
+        "type": "String"
+      }
+    }
+  },
   "onboardingHealthyRangeLabel": "Healthy range for {height}: {range}",
-  "@onboardingHealthyRangeLabel": {"placeholders": {"height": {"type": "String"}, "range": {"type": "String"}}},
+  "@onboardingHealthyRangeLabel": {
+    "placeholders": {
+      "height": {
+        "type": "String"
+      },
+      "range": {
+        "type": "String"
+      }
+    }
+  },
   "onboardingHealthyRangeSource": "WHO, BMI 18.5–24.9",
   "onboardingImplausibleChange": "Change",
   "onboardingImplausibleHeightBody": "{value} is an unusual height. Keep it?",
-  "@onboardingImplausibleHeightBody": {"placeholders": {"value": {"type": "String"}}},
+  "@onboardingImplausibleHeightBody": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "onboardingImplausibleKeep": "Keep",
   "onboardingImplausibleTitle": "Double-check this value",
   "onboardingImplausibleWeightBody": "{value} is an unusual weight. Keep it?",
-  "@onboardingImplausibleWeightBody": {"placeholders": {"value": {"type": "String"}}},
-  "onboardingIntroDescription": "To start, the app needs some information about you to calculate your daily calorie goal.\nAll information about you is stored securely on your device.",
+  "@onboardingImplausibleWeightBody": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingIntroDescription": "Set up your local profile. Your starting food goals are 1,700 kcal and 120 g protein and can be edited at any time.\nAll information about you is stored securely on your device.",
   "onboardingIntroSourcesLinkLabel": "Read our medical calculation sources",
   "onboardingKcalPerDayLabel": "kcal per day",
   "onboardingKjPerDayLabel": "kJ per day",
@@ -920,8 +1061,8 @@
   "recipeServingsCountLabel": "Servings (optional)",
   "recipeTagsHelper": "Comma-separated, e.g. \"breakfast, vegan\"",
   "recipeTagsLabel": "Tags",
-  "recipeTotalWeightHelper": "Defaults to sum of ingredients. Liquids approximated as 1 ml ≈ 1 g.",
-  "recipeTotalWeightLabel": "Total weight (g)",
+  "recipeTotalWeightHelper": "Leave this alone when using estimated bowls or servings. Nutrition comes from your ingredients; no final pot weighing is required.",
+  "recipeTotalWeightLabel": "Cooked weight (g, optional)",
   "recipesEmptyHint": "Build a meal from multiple ingredients and reuse it like any other food.",
   "recipesEmptyLabel": "No recipes yet",
   "recipesFilterAllLabel": "All",
@@ -1067,12 +1208,12 @@
   "sourcesIconTooltip": "View sources",
   "sourcesMacrosDescription": "The default split of 60% carbohydrates, 25% fat, and 15% protein falls within the population nutrient intake ranges published by the WHO. You can adjust this in Settings → Calculations. Source: WHO Technical Report Series 916 (2003), Diet, Nutrition and the Prevention of Chronic Diseases.",
   "sourcesMacrosTitle": "Macronutrient distribution",
-  "sourcesNonBinaryDescription": "Energy-expenditure research has historically used binary sex categories, so there is no single validated TDEE formula for non-binary people. OpenNutriTracker therefore lets you choose between an averaged reference, an estrogen-typical reference, or a testosterone-typical reference under Settings → Calculations. If an accurate number genuinely matters for your care, please speak to a clinician familiar with your hormone status.",
+  "sourcesNonBinaryDescription": "Energy-expenditure research has historically used binary sex categories, so there is no single validated TDEE formula for non-binary people. DevNutrition therefore lets you choose between an averaged reference, an estrogen-typical reference, or a testosterone-typical reference under Settings → Calculations. If an accurate number genuinely matters for your care, please speak to a clinician familiar with your hormone status.",
   "sourcesNutrientReferenceTitle": "Nutrient reference intakes",
   "sourcesNutrientReferenceDescription": "Daily reference amounts shown on the diary nutrient panel come from the Institute of Medicine's Dietary Reference Intakes summary, which covers per-nutrient targets for adults.",
   "sourcesNonBinaryTitle": "Non-binary calorie estimation",
   "sourcesOpenSourceLabel": "View source",
-  "sourcesScreenIntro": "OpenNutriTracker uses well-established, peer-reviewed methodologies for every calculation it shows. The citations below link to the original sources so you can verify any number yourself.",
+  "sourcesScreenIntro": "DevNutrition uses well-established, peer-reviewed methodologies for every calculation it shows. The citations below link to the original sources so you can verify any number yourself.",
   "sugarLabel": "sugar",
   "suggestedLabel": "Suggested",
   "suppliedLabel": "supplied",
@@ -1096,7 +1237,13 @@
   "weightHistoryWeightLabel": "Weight",
   "weightLabel": "Weight",
   "yearsLabel": "{age} years",
-  "@yearsLabel": {"placeholders": {"age": {"type": "int"}}},
+  "@yearsLabel": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
   "logWaterAmountLabel": "Add {amount} ml",
   "logWaterDialogTitle": "Log water intake",
   "logWaterNothingToUndoLabel": "Nothing to undo",
@@ -1149,26 +1296,40 @@
   "customMealsMergeConfirmContent": "This will replace all entries logged with {loser} so they show {winner} instead, and remove {loser} from your custom foods. This can't be undone.",
   "@customMealsMergeConfirmContent": {
     "placeholders": {
-      "loser": { "type": "String" },
-      "winner": { "type": "String" }
+      "loser": {
+        "type": "String"
+      },
+      "winner": {
+        "type": "String"
+      }
     }
   },
   "customMealsMergeConfirmAction": "Merge",
   "customMealsMergeSuccessSnackbarOne": "Merged — {winner} now has 1 logged entry.",
   "@customMealsMergeSuccessSnackbarOne": {
-    "placeholders": { "winner": { "type": "String" } }
+    "placeholders": {
+      "winner": {
+        "type": "String"
+      }
+    }
   },
   "customMealsMergeSuccessSnackbarOther": "Merged — {winner} now has {count} logged entries.",
   "@customMealsMergeSuccessSnackbarOther": {
     "placeholders": {
-      "count": { "type": "int" },
-      "winner": { "type": "String" }
+      "count": {
+        "type": "int"
+      },
+      "winner": {
+        "type": "String"
+      }
     }
   },
   "fastingHomeChipBody": "Fasting · {remaining} left",
   "@fastingHomeChipBody": {
     "placeholders": {
-      "remaining": { "type": "String" }
+      "remaining": {
+        "type": "String"
+      }
     }
   },
   "fastingNotificationChannelName": "Fasting timer",
@@ -1210,45 +1371,51 @@
   "bulkAddChooseFoodLabel": "Choose another food",
   "bulkAddNothingToLogLabel": "Nothing to log yet",
   "bulkAddSearchFailedLabel": "Couldn't search for these foods",
-  "@bulkAddSubmitLabel": {"placeholders": {"count": {"type": "int"}}},
+  "@bulkAddSubmitLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "bulkAddCheckAmountLabel": "Check the unit for this amount",
   "bulkAddDefaultAmountLabel": "Amount not stated",
   "bulkAddErrorInvalidName": "Item {number}: not a valid food name",
   "@bulkAddErrorInvalidName": {
-      "placeholders": {
-          "number": {
-              "type": "int"
-          }
+    "placeholders": {
+      "number": {
+        "type": "int"
       }
+    }
   },
   "bulkAddErrorQuantityTooSmall": "Item {number}: quantity must be greater than 0",
   "@bulkAddErrorQuantityTooSmall": {
-      "placeholders": {
-          "number": {
-              "type": "int"
-          }
+    "placeholders": {
+      "number": {
+        "type": "int"
       }
+    }
   },
   "bulkAddErrorQuantityTooLarge": "Item {number}: quantity must be {bound} or less",
   "@bulkAddErrorQuantityTooLarge": {
-      "placeholders": {
-          "number": {
-              "type": "int"
-          },
-          "bound": {
-              "type": "int"
-          }
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "bound": {
+        "type": "int"
       }
+    }
   },
   "bulkAddRowQuantityInvalid": "Enter a number with at most two decimals",
   "bulkAddRowQuantityTooSmall": "Quantity must be greater than 0",
   "bulkAddRowQuantityTooLarge": "Quantity must be {bound} or less",
   "@bulkAddRowQuantityTooLarge": {
-      "placeholders": {
-          "bound": {
-              "type": "int"
-          }
+    "placeholders": {
+      "bound": {
+        "type": "int"
       }
+    }
   },
   "settingsAiAssistLabel": "AI meal assistance",
   "settingsAiAssistNotConfiguredLabel": "Off — no key saved",
@@ -1261,9 +1428,9 @@
   "bulkAddModelHintLabel": "A model can read this for you",
   "bulkAddModelHintKeyLabel": "With your own API key",
   "aiConsentChangeProviderNote": "You can change provider later. Each provider's terms are shown in Settings, and nothing you type or photograph is sent until you use the feature.",
-  "aiConsentOwnServerCheckNote": "Saving your server's address also asks it which models it offers, and runs one setup check \u2014 a fixed example line and a sample photograph of ours, never anything of yours.",
+  "aiConsentOwnServerCheckNote": "Saving your server's address also asks it which models it offers, and runs one setup check — a fixed example line and a sample photograph of ours, never anything of yours.",
   "aiConsentAgreeLabel": "I UNDERSTAND",
-  "aiAssistDisclosureCommon": "Your diary and your profile are never sent. Nutrition values always come from the food databases, never from the model. The key is stored on this device only: OpenNutriTracker never sees it and does not pay for its use.",
+  "aiAssistDisclosureCommon": "Your diary and your profile are never sent. Nutrition values always come from the food databases, never from the model. The key is stored on this device only: DevNutrition never sees it and does not pay for its use.",
   "aiAssistDisclosureAnthropic": "With a key saved, the text you type on the multi-item add screen — and any photo you choose to read there — is sent to Anthropic. Photos are sent for that one request and never saved.",
   "aiAssistDisclosureOpenRouter": "With a key saved, the text you type on the multi-item add screen — and any photo you choose to read there — is sent to OpenRouter, which forwards it to the provider serving your chosen model. OpenRouter also forwards an account-level identity to that provider on every request, and this cannot be switched off. It does not keep your content beyond routing the request, except as required for abuse detection, security, billing or legal compliance. The vendor serving your model keeps what it receives under its own policy.",
   "aiAssistDisclosureOpenAI": "With a key saved, the text you type on the multi-item add screen — and any photo you choose to read there — is sent to OpenAI. OpenAI keeps what you send for up to 30 days to monitor for abuse, and longer if the law requires it or it is reasonably necessary to protect its services or a third party from harm.",
@@ -1271,15 +1438,33 @@
   "aiAssistEndpointFieldLabel": "Server address",
   "aiAssistModelFieldLabel": "Model name",
   "aiAssistDisclosureOwnServerSecure": "With an address saved, the text you type on the multi-item add screen, and any photo you choose to read there, is sent to {host} — a server you run. No third party receives it, and the project has no relationship with that machine and can promise nothing about what it keeps. The connection is encrypted.",
-  "@aiAssistDisclosureOwnServerSecure": {"placeholders": {"host": {"type": "String"}}},
+  "@aiAssistDisclosureOwnServerSecure": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
   "aiAssistDisclosureOwnServerPlaintext": "With an address saved, the text you type on the multi-item add screen, and any photo you choose to read there, is sent to {host} — a server you run. No third party receives it, and the project has no relationship with that machine and can promise nothing about what it keeps. This address is plain HTTP, so the connection is not encrypted: anything on the network between this phone and that server can read what is sent.",
-  "@aiAssistDisclosureOwnServerPlaintext": {"placeholders": {"host": {"type": "String"}}},
+  "@aiAssistDisclosureOwnServerPlaintext": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
   "aiAssistEndpointInvalidLabel": "Enter an address starting with http:// or https://",
   "aiAssistModelRequiredLabel": "Name the model this server should use.",
   "aiAssistEndpointPublicPlaintextLabel": "That address is public and unencrypted, so requests to it are refused. Use https, or a private address.",
   "aiAssistProbeSectionLabel": "Setup check",
   "aiAssistProbeRunningLabel": "Checking this server. The two checks run one after the other, so allow up to {minutes, plural, one{a minute} other{{minutes} minutes}} — you can close this, and the answer will be here when you come back.",
-  "@aiAssistProbeRunningLabel": {"placeholders": {"minutes": {"type": "int"}}},
+  "@aiAssistProbeRunningLabel": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "aiAssistProbeCheckLabel": "Check this server",
   "aiAssistProbeTextLabel": "Meal text",
   "aiAssistProbePhotoLabel": "Photos",
@@ -1291,23 +1476,53 @@
   "aiAssistLoadModelsLabel": "Load models",
   "aiAssistPickModelLabel": "Choose a model",
   "aiAssistModelsUnreachableLabel": "Could not reach {host}. It may be asleep, on another network, or behind a VPN — type the model name instead.",
-  "@aiAssistModelsUnreachableLabel": {"placeholders": {"host": {"type": "String"}}},
+  "@aiAssistModelsUnreachableLabel": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
   "aiAssistModelsEmptyLabel": "{host} answered, and lists no models. Type the model name instead.",
-  "@aiAssistModelsEmptyLabel": {"placeholders": {"host": {"type": "String"}}},
+  "@aiAssistModelsEmptyLabel": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
   "aiAssistModelsRejectedLabel": "{host} answered, but not with a model list. Check the address, or type the model name instead.",
-  "@aiAssistModelsRejectedLabel": {"placeholders": {"host": {"type": "String"}}},
+  "@aiAssistModelsRejectedLabel": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
   "aiAssistModelsInsecureLabel": "Nothing was sent: that address is public and unencrypted. Use https, or type the model name instead.",
   "aiAssistProviderLabel": "Provider",
   "aiAssistModelLabel": "Model",
   "aiAssistServedByLabel": "Served by {provider}",
-  "@aiAssistServedByLabel": {"placeholders": {"provider": {"type": "String"}}},
+  "@aiAssistServedByLabel": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
+  },
   "aiAssistModelRecommendedLabel": "Recommended",
   "aiAssistModelCheaperLabel": "Cheaper, and weaker on poor-quality photos",
   "aiAssistModelMoreItemsLabel": "Lists more items from a photo",
   "aiAssistModelCheapestLabel": "Cheapest on this list",
   "aiAssistNoKeyForProviderLabel": "No key saved for this provider.",
   "aiAssistKeyFieldLabel": "{provider} API key",
-  "@aiAssistKeyFieldLabel": {"placeholders": {"provider": {"type": "String"}}},
+  "@aiAssistKeyFieldLabel": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
+  },
   "aiAssistKeySavedLabel": "Key saved",
   "aiAssistRemoveKeyLabel": "Remove key",
   "bulkAddReadByModelLabel": "Read by AI — check each row",
@@ -1318,22 +1533,34 @@
   "bulkAddModelTimedOutLabel": "AI didn't run: your server didn't answer in time.",
   "bulkAddWaitElapsedLabel": "Waiting for your server · {seconds} s",
   "@bulkAddWaitElapsedLabel": {
-      "placeholders": {
-          "seconds": {
-              "type": "int"
-          }
+    "placeholders": {
+      "seconds": {
+        "type": "int"
       }
+    }
   },
   "bulkAddWaitModelLoadingLabel": "Your server may be loading its model. The first request after a while can take a minute or two — that is normal.",
   "bulkAddWaitCancelLabel": "Cancel",
   "bulkAddPhotoLabel": "Read a photo",
-  "bulkAddPhotoDisclosureCommon": "OpenNutriTracker keeps no copy of its own, and it is never included in your exports.",
+  "bulkAddPhotoDisclosureCommon": "DevNutrition keeps no copy of its own, and it is never included in your exports.",
   "bulkAddPhotoDisclosureAnthropic": "The photo is sent to Anthropic to identify the foods in it.",
   "bulkAddPhotoDisclosureOpenRouter": "The photo is sent to OpenRouter, which forwards it to {provider} to identify the foods in it.",
-  "@bulkAddPhotoDisclosureOpenRouter": {"placeholders": {"provider": {"type": "String"}}},
+  "@bulkAddPhotoDisclosureOpenRouter": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
+  },
   "bulkAddPhotoDisclosureOpenAI": "The photo is sent to OpenAI to identify the foods in it. OpenAI keeps it for up to 30 days to monitor for abuse, and longer if the law requires it or it is reasonably necessary to protect its services or a third party from harm.",
   "bulkAddPhotoDisclosureOwnServer": "The photo is sent to {host} to identify the foods in it.",
-  "@bulkAddPhotoDisclosureOwnServer": {"placeholders": {"host": {"type": "String"}}},
+  "@bulkAddPhotoDisclosureOwnServer": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
   "bulkAddReadFromPhotoLabel": "Read from a photo — check every food and amount",
   "bulkAddPhotoUnavailableLabel": "Turn on AI meal assistance in Settings to read photos",
   "bulkAddPhotoKeyRejectedLabel": "Your API key was rejected. Check it in Settings.",
@@ -1345,31 +1572,199 @@
   "bulkAddPhotoNoFoodLabel": "No food found in that photo. Try another photo, or type the items instead.",
   "settingsHealthSyncSubtitle": "Import workouts",
   "healthSyncAutoImportLabel": "Automatically import workouts from {platform}",
-  "@healthSyncAutoImportLabel": {"placeholders": {"platform": {"type": "String"}}},
+  "@healthSyncAutoImportLabel": {
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
   "healthSyncKcalMultiplierLabel": "Workout calorie credit",
-  "healthSyncKcalMultiplierSubtitle": "Your body typically compensates for exercise by burning fewer calories the rest of the day. 100% credits every workout calorie toward your daily goal.",
+  "healthSyncKcalMultiplierSubtitle": "Scales the energy recorded for future imported workouts. Your food target stays fixed while exercise adjustment is off in My Goals.",
   "healthSyncKcalMultiplierValueLabel": "{percent}%",
-  "@healthSyncKcalMultiplierValueLabel": {"placeholders": {"percent": {"type": "int"}}},
+  "@healthSyncKcalMultiplierValueLabel": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
   "healthSyncSuggestedLabel": "Suggested for you: {percent}%",
-  "@healthSyncSuggestedLabel": {"placeholders": {"percent": {"type": "int"}}},
+  "@healthSyncSuggestedLabel": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
   "healthSyncImportNowLabel": "Import now",
   "healthSyncLastImportLabel": "Last import: {time}",
-  "@healthSyncLastImportLabel": {"placeholders": {"time": {"type": "String"}}},
+  "@healthSyncLastImportLabel": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "healthSyncNeverImportedLabel": "No workouts imported yet",
   "healthSyncImportedCountLabel": "{count, plural, =0{No new workouts} one{1 workout imported} other{{count} workouts imported}}",
-  "@healthSyncImportedCountLabel": {"placeholders": {"count": {"type": "num"}}},
-  "healthSyncPermissionDeniedLabel": "{platform} access was not granted. Allow OpenNutriTracker to read workouts to import them.",
-  "@healthSyncPermissionDeniedLabel": {"placeholders": {"platform": {"type": "String"}}},
+  "@healthSyncImportedCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "healthSyncPermissionDeniedLabel": "{platform} access was not granted. Allow DevNutrition to read workouts to import them.",
+  "@healthSyncPermissionDeniedLabel": {
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
   "healthSyncDisclosureTitle": "Import workouts from {platform}?",
-  "@healthSyncDisclosureTitle": {"placeholders": {"platform": {"type": "String"}}},
-  "healthSyncDisclosureBody": "OpenNutriTracker will read your finished workouts from {platform} — their type, when they happened, how long they lasted and the energy they report.\n\nWorkouts are filed in your diary as activities you can edit or delete, and the energy they report raises that day's calorie goal by a share you choose.",
-  "@healthSyncDisclosureBody": {"placeholders": {"platform": {"type": "String"}}},
-  "healthSyncDisclosureBodyFatAddendum": "OpenNutriTracker will also read the most recent body fat percentage that {platform} holds. The body fat reading is used to suggest what that share should be.",
-  "@healthSyncDisclosureBodyFatAddendum": {"placeholders": {"platform": {"type": "String"}}},
+  "@healthSyncDisclosureTitle": {
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
+  "healthSyncDisclosureBody": "DevNutrition will read your finished workouts from {platform} — their type, when they happened, how long they lasted and the energy they report.\n\nWorkouts appear separately in your diary. Your food target stays fixed unless you explicitly enable Adjust food target from exercise in My Goals.",
+  "@healthSyncDisclosureBody": {
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
+  "healthSyncDisclosureBodyFatAddendum": "DevNutrition will also read the most recent body fat percentage that {platform} holds. The body fat reading is used to suggest what that share should be.",
+  "@healthSyncDisclosureBodyFatAddendum": {
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
   "healthSyncDisclosureFooter": "Nothing is written back to {platform}, and none of it is sent anywhere — it stays on this device.\n\nYou can turn this off at any time, and doing so stops any further reading.",
-  "@healthSyncDisclosureFooter": {"placeholders": {"platform": {"type": "String"}}},
+  "@healthSyncDisclosureFooter": {
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
   "healthSyncDisclosureContinueAction": "Continue",
   "healthSyncUnavailableLabel": "Health data is not available on this device. Workout import needs Health Connect on Android or Apple Health on iOS.",
   "sourcesEnergyCompensationTitle": "Workout calorie credit",
-  "sourcesEnergyCompensationDescription": "Imported workouts are credited with less than the energy your device reports. People compensate for exercise by burning fewer calories through the rest of the day — about 28% on average, and more at a higher body fat percentage. The suggested credit comes from that research and you can override it under Settings → Health sync. The energy itself is reported by the app or device that recorded the workout, not calculated with the app’s MET formula."
+  "sourcesEnergyCompensationDescription": "Imported workouts are credited with less than the energy your device reports. People compensate for exercise by burning fewer calories through the rest of the day — about 28% on average, and more at a higher body fat percentage. The suggested credit comes from that research and you can override it under Settings → Health sync. The energy itself is reported by the app or device that recorded the workout, not calculated with the app’s MET formula.",
+  "devQuickLog": "Quick Log",
+  "devQuickHint": "Your meals, ready in a tap.",
+  "devPinned": "Pinned",
+  "devAll": "All",
+  "devFoods": "Foods",
+  "devPresets": "Meal presets",
+  "devRecipes": "Recipes",
+  "devRecent": "Recent",
+  "devSearchHint": "Search your meals or Indian foods",
+  "devRoti": "Roti batch",
+  "devRice": "Raw rice batch",
+  "devGoals": "My goals",
+  "devNewPreset": "New meal preset",
+  "devNewRecipe": "New recipe",
+  "devNewFood": "New food / product label",
+  "devSearchScan": "Search & barcode",
+  "devMore": "More",
+  "devLog": "Log",
+  "devLogged": "Added to your diary",
+  "devPin": "Pin / unpin",
+  "devMoveUp": "Move up",
+  "devMoveDown": "Move down",
+  "devEdit": "Edit",
+  "devEditLabel": "Save / edit product label",
+  "devAmount": "Amount",
+  "devUnit": "Unit",
+  "devCalibrate": "Calibrate this measure",
+  "devBasePerUnit": "Grams or ml in one of this measure",
+  "devCalibrationHint": "Calibrate separately for each food. A cup of atta and a cup of rice weigh different amounts.",
+  "devSave": "Save",
+  "devPositive": "Enter a positive number.",
+  "devUnknownMeasure": "Set this food’s measure first.",
+  "devMyUsual": "Save as my usual serving",
+  "devUsual": "Usual",
+  "devSmall": "Small",
+  "devLarge": "Large",
+  "devType": "Meal",
+  "devDay": "Diary day",
+  "devQuantity": "Quantity to log",
+  "devNutritionKnown": "Nutrition shown is based on available data. A dash means unknown; estimates depend on ingredients and portion size.",
+  "devSource": "Source",
+  "devIngredientNotes": "Ingredients & notes",
+  "devEmpty": "Pin a food or meal to keep it here. Search and your recent meals are always available.",
+  "devPickFood": "Choose a food or product",
+  "devFlour": "Atta / flour product",
+  "devRiceProduct": "Raw rice product",
+  "devDryAmount": "Dry ingredient amount",
+  "devCupWeight": "Grams in your dry cup",
+  "devMadeRotis": "Number of rotis produced",
+  "devEatRotis": "Rotis to eat",
+  "devFatProduct": "Added fat",
+  "devNone": "None",
+  "devOil": "Oil",
+  "devGhee": "Ghee",
+  "devButter": "Butter",
+  "devFatAmount": "Added fat (grams)",
+  "devFatMode": "Fat amount applies to",
+  "devWholeBatch": "Whole batch",
+  "devPerRoti": "Each roti",
+  "devBatchTotal": "Batch nutrition",
+  "devPerPortion": "Nutrition per portion",
+  "devRiceFraction": "Custom fraction of batch (0 to 1)",
+  "devRiceServings": "Number of servings produced",
+  "devEatServings": "Servings to eat",
+  "devBatchName": "Save batch as recipe (name)",
+  "devBatchHelp": "Only measure the dry ingredient. Water is not food energy; no cooked weight is needed.",
+  "devYieldHelp": "Estimate how many bowls or katori the batch makes. Logging a portion uses that fraction of the ingredients; cooked weight is optional.",
+  "devKind": "Save as",
+  "devPortionUnit": "Yield unit",
+  "devYield": "Number of portions / bowls in the batch",
+  "devCalories": "Calories (kcal / day)",
+  "devProtein": "Protein (g / day)",
+  "devCarbs": "Carbohydrate (g / day)",
+  "devFat": "Fat (g / day)",
+  "devWeight": "Goal weight (kg)",
+  "devWater": "Water goal (ml / day)",
+  "devExerciseToggle": "Add exercise calories to food budget",
+  "devExerciseHelp": "Off keeps food calories fixed. Workouts are still recorded separately.",
+  "devGoalsHelp": "Your starting targets are 1700 kcal, 120 g protein and 80 kg goal weight. All targets are editable.",
+  "devGoalsSaved": "Goals saved. Today uses your new targets; past days keep theirs.",
+  "devDuplicate": "Log again",
+  "devMove": "Move to another meal or day",
+  "devDelete": "Delete entry",
+  "devExtraOil": "Extra oil in this portion (g, optional)",
+  "devExtraOilHelp": "An actual ingredient adjustment for a richer portion. Leave blank for the saved recipe.",
+  "devDetails": "Details",
+  "devRecipePortion": "Estimated portion",
+  "devChooseDay": "Choose day",
+  "devActivity": "Log exercise",
+  "devAbout": "About DevNutrition",
+  "devAboutText": "DevNutrition is a personal vegetarian nutrition tracker based on OpenNutriTracker 2.4.0, licensed under GPLv3. Indian reference data: Anuvaad INDB 2024.11, CC BY 4.0. USDA SR Legacy: public domain (CC0). Brand names belong to their owners. Reference portions and product labels are estimates until checked against your food. All core logging works offline; Open Food Facts searches and barcode lookup use the internet. No account or Supabase credential is required.",
+  "devViewRecipe": "Edit ingredients / portions",
+  "devOneTap": "Log usual serving",
+  "devDietHint": "Vegetarian meals • dry ingredient cooking • estimated bowls",
+  "devNutritionPartial": "Some ingredient nutrients are unknown. Daily totals include known values only.",
+  "devSavedBatch": "Batch saved to recipes",
+  "devYieldUnitHint": "Use katori, bowl or serving for the estimated batch yield.",
+  "devFatTooMuch": "The amount eaten cannot exceed the batch.",
+  "devProductHelp": "Choose your saved or scanned product for its exact nutrition. Reference products are marked as estimates.",
+  "devRemove": "Remove",
+  "devMealPresetHelp": "A meal preset can combine foods and recipes in the amounts you normally eat. Editing it affects future logs only.",
+  "devManagePins": "Reorder pinned meals with the menu beside each item.",
+  "devHomeQuick": "Quick Log • roti • rice",
+  "devCopyTomorrow": "Duplicate for another day",
+  "devDateLabel": "Selected diary day",
+  "devStorageError": "Could not save. Please try again.",
+  "devLiquidMeasures": "Liquid defaults use 5 ml per teaspoon, 15 ml per tablespoon and a 250 ml metric cup. Your food-specific calibration takes priority.",
+  "devAdherence": "Logged days near your target"
 }

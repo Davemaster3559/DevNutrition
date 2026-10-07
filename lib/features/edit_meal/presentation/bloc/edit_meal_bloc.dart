@@ -51,8 +51,11 @@ class EditMealBloc extends Bloc<EditMealEvent, EditMealState> {
   final CustomMealDataSource _customMealDataSource; // #267
   final ConfigRepository _configRepository;
 
-  EditMealBloc(this._getConfigUsecase, this._customMealDataSource, this._configRepository)
-      : super(EditMealInitial()) {
+  EditMealBloc(
+    this._getConfigUsecase,
+    this._customMealDataSource,
+    this._configRepository,
+  ) : super(EditMealInitial()) {
     on<InitializeEditMealEvent>((event, emit) async {
       emit(EditMealLoadingState());
 
@@ -60,10 +63,12 @@ class EditMealBloc extends Bloc<EditMealEvent, EditMealState> {
       final mode = CustomMealFormMode.fromString(
         await _configRepository.getCustomMealFormMode(),
       );
-      emit(EditMealLoadedState(
-        usesImperialUnits: config.usesImperialFoodUnits,
-        formMode: mode,
-      ));
+      emit(
+        EditMealLoadedState(
+          usesImperialUnits: config.usesImperialFoodUnits,
+          formMode: mode,
+        ),
+      );
     });
   }
 
@@ -106,23 +111,51 @@ class EditMealBloc extends Bloc<EditMealEvent, EditMealState> {
     }
 
     double? fromTextOrOld(String? text, double? oldValue) =>
-        multiplyIfNotNull(text?.toDoubleOrNull() ?? oldValue);
+        text == null ? oldValue : multiplyIfNotNull(text.toDoubleOrNull());
 
     final newMealNutriments = MealNutrimentsEntity(
       energyKcal100: multiplyIfNotNull(kcalText.toDoubleOrNull()),
       carbohydrates100: multiplyIfNotNull(carbsText.toDoubleOrNull()),
       fat100: multiplyIfNotNull(fatText.toDoubleOrNull()),
       proteins100: multiplyIfNotNull(proteinText.toDoubleOrNull()),
+      monounsaturatedFat100: oldMealEntity.nutriments.monounsaturatedFat100,
+      polyunsaturatedFat100: oldMealEntity.nutriments.polyunsaturatedFat100,
+      transFat100: oldMealEntity.nutriments.transFat100,
+      cholesterol100: oldMealEntity.nutriments.cholesterol100,
+      zinc100: oldMealEntity.nutriments.zinc100,
+      phosphorus100: oldMealEntity.nutriments.phosphorus100,
+      vitaminA100: oldMealEntity.nutriments.vitaminA100,
+      vitaminC100: oldMealEntity.nutriments.vitaminC100,
+      vitaminB6100: oldMealEntity.nutriments.vitaminB6100,
+      niacin100: oldMealEntity.nutriments.niacin100,
       sugars100: fromTextOrOld(sugarsText, oldMealEntity.nutriments.sugars100),
-      saturatedFat100: fromTextOrOld(saturatedFatText, oldMealEntity.nutriments.saturatedFat100),
+      saturatedFat100: fromTextOrOld(
+        saturatedFatText,
+        oldMealEntity.nutriments.saturatedFat100,
+      ),
       fiber100: fromTextOrOld(fiberText, oldMealEntity.nutriments.fiber100),
       sodium100: fromTextOrOld(sodiumText, oldMealEntity.nutriments.sodium100),
-      calcium100: fromTextOrOld(calciumText, oldMealEntity.nutriments.calcium100),
+      calcium100: fromTextOrOld(
+        calciumText,
+        oldMealEntity.nutriments.calcium100,
+      ),
       iron100: fromTextOrOld(ironText, oldMealEntity.nutriments.iron100),
-      potassium100: fromTextOrOld(potassiumText, oldMealEntity.nutriments.potassium100),
-      magnesium100: fromTextOrOld(magnesiumText, oldMealEntity.nutriments.magnesium100),
-      vitaminD100: fromTextOrOld(vitaminDText, oldMealEntity.nutriments.vitaminD100),
-      vitaminB12100: fromTextOrOld(vitaminB12Text, oldMealEntity.nutriments.vitaminB12100),
+      potassium100: fromTextOrOld(
+        potassiumText,
+        oldMealEntity.nutriments.potassium100,
+      ),
+      magnesium100: fromTextOrOld(
+        magnesiumText,
+        oldMealEntity.nutriments.magnesium100,
+      ),
+      vitaminD100: fromTextOrOld(
+        vitaminDText,
+        oldMealEntity.nutriments.vitaminD100,
+      ),
+      vitaminB12100: fromTextOrOld(
+        vitaminB12Text,
+        oldMealEntity.nutriments.vitaminB12100,
+      ),
     );
 
     return MealEntity(
@@ -147,7 +180,7 @@ class EditMealBloc extends Bloc<EditMealEvent, EditMealState> {
       servingUnit: unitText,
       servingSize: oldMealEntity.servingSize,
       nutriments: newMealNutriments,
-      source: oldMealEntity.source,
+      source: MealSourceEntity.custom,
       // #64 follow-up: a freshly-picked local photo wins over what was
       // on the old entity; a clear flag means the user removed the
       // photo and the slug should be wiped from the saved meal.
@@ -159,6 +192,8 @@ class EditMealBloc extends Bloc<EditMealEvent, EditMealState> {
 
   /// Persist custom meal template so it appears in Recent Meals before first log (#267)
   Future<void> saveCustomMeal(MealEntity mealEntity) async {
-    await _customMealDataSource.saveCustomMeal(MealDBO.fromMealEntity(mealEntity));
+    await _customMealDataSource.saveCustomMeal(
+      MealDBO.fromMealEntity(mealEntity),
+    );
   }
 }

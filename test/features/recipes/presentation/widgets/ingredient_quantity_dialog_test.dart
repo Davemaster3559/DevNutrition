@@ -6,17 +6,17 @@ import 'package:opennutritracker/features/recipes/presentation/widgets/ingredien
 import 'package:opennutritracker/generated/l10n.dart';
 
 MealEntity _solidMeal() => MealEntity(
-      code: 'flour',
-      name: 'Flour',
-      url: null,
-      mealQuantity: null,
-      mealUnit: 'g',
-      servingQuantity: null,
-      servingUnit: null,
-      servingSize: null,
-      nutriments: MealNutrimentsEntity.empty(),
-      source: MealSourceEntity.off,
-    );
+  code: 'flour',
+  name: 'Flour',
+  url: null,
+  mealQuantity: null,
+  mealUnit: 'g',
+  servingQuantity: null,
+  servingUnit: null,
+  servingSize: null,
+  nutriments: MealNutrimentsEntity.empty(),
+  source: MealSourceEntity.off,
+);
 
 Widget _wrap({required Widget child}) {
   return MaterialApp(
@@ -27,18 +27,20 @@ Widget _wrap({required Widget child}) {
 }
 
 void main() {
-  testWidgets('returns selection on confirm', (tester) async {
+  testWidgets('calibrates a serving whose reference weight is unknown', (
+    tester,
+  ) async {
     IngredientQuantitySelection? captured;
-
-    await tester.pumpWidget(_wrap(
-      child: Builder(
-        builder: (context) => Scaffold(
-          body: Center(
-            child: ElevatedButton(
+    await tester.pumpWidget(
+      _wrap(
+        child: Builder(
+          builder: (context) => Scaffold(
+            body: ElevatedButton(
               onPressed: () async {
                 captured = await showIngredientQuantityDialog(
                   context,
                   meal: _solidMeal(),
+                  initialUnit: 'serving',
                 );
               },
               child: const Text('Open'),
@@ -46,7 +48,39 @@ void main() {
           ),
         ),
       ),
-    ));
+    );
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField), '1.25');
+    await tester.enterText(find.byType(TextField).last, '80');
+    await tester.tap(find.text('Add'));
+    await tester.pumpAndSettle();
+    expect(captured!.unit, 'serving');
+    expect(captured!.convertedAmountG, 100);
+  });
+
+  testWidgets('returns selection on confirm', (tester) async {
+    IngredientQuantitySelection? captured;
+
+    await tester.pumpWidget(
+      _wrap(
+        child: Builder(
+          builder: (context) => Scaffold(
+            body: Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  captured = await showIngredientQuantityDialog(
+                    context,
+                    meal: _solidMeal(),
+                  );
+                },
+                child: const Text('Open'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
 
     await tester.tap(find.text('Open'));
     await tester.pumpAndSettle();
@@ -63,29 +97,33 @@ void main() {
     expect(captured!.unit, 'g');
   });
 
-  testWidgets('returns null when amount is invalid', (tester) async {
+  testWidgets('keeps invalid amount open for correction and cancels safely', (
+    tester,
+  ) async {
     IngredientQuantitySelection? captured = const IngredientQuantitySelection(
       amount: -1,
       unit: 'sentinel',
     );
 
-    await tester.pumpWidget(_wrap(
-      child: Builder(
-        builder: (context) => Scaffold(
-          body: Center(
-            child: ElevatedButton(
-              onPressed: () async {
-                captured = await showIngredientQuantityDialog(
-                  context,
-                  meal: _solidMeal(),
-                );
-              },
-              child: const Text('Open'),
+    await tester.pumpWidget(
+      _wrap(
+        child: Builder(
+          builder: (context) => Scaffold(
+            body: Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  captured = await showIngredientQuantityDialog(
+                    context,
+                    meal: _solidMeal(),
+                  );
+                },
+                child: const Text('Open'),
+              ),
             ),
           ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.text('Open'));
     await tester.pumpAndSettle();
@@ -94,6 +132,11 @@ void main() {
     await tester.tap(find.text('Add'));
     await tester.pumpAndSettle();
 
+    expect(captured!.unit, 'sentinel');
+    expect(find.byType(TextFormField), findsOneWidget);
+    expect(find.textContaining('positive'), findsOneWidget);
+    tester.state<NavigatorState>(find.byType(Navigator)).pop();
+    await tester.pumpAndSettle();
     expect(captured, isNull);
   });
 }

@@ -11,6 +11,13 @@ class IntakeEntity extends Equatable {
   final DateTime dateTime;
 
   final MealEntity meal;
+  final String? displayUnit;
+  final double? baseAmountPerDisplayUnit;
+
+  double get displayedAmount =>
+      baseAmountPerDisplayUnit != null && baseAmountPerDisplayUnit! > 0
+      ? amount / baseAmountPerDisplayUnit!
+      : amount;
 
   const IntakeEntity({
     required this.id,
@@ -19,6 +26,8 @@ class IntakeEntity extends Equatable {
     required this.type,
     required this.meal,
     required this.dateTime,
+    this.displayUnit,
+    this.baseAmountPerDisplayUnit,
   });
 
   factory IntakeEntity.fromIntakeDBO(IntakeDBO intakeDBO) {
@@ -29,6 +38,8 @@ class IntakeEntity extends Equatable {
       type: IntakeTypeEntity.fromIntakeTypeDBO(intakeDBO.type),
       meal: MealEntity.fromMealDBO(intakeDBO.meal),
       dateTime: intakeDBO.dateTime,
+      displayUnit: intakeDBO.displayUnit,
+      baseAmountPerDisplayUnit: intakeDBO.baseAmountPerDisplayUnit,
     );
   }
 
@@ -43,5 +54,13 @@ class IntakeEntity extends Equatable {
       amount * (meal.nutriments.proteinsPerUnit ?? 0);
 
   @override
-  List<Object?> get props => [id, unit, amount, type, dateTime];
+  List<Object?> get props => [
+    id,
+    unit,
+    amount,
+    type,
+    dateTime,
+    displayUnit,
+    baseAmountPerDisplayUnit,
+  ];
 }

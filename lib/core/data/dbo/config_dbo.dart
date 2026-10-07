@@ -188,6 +188,10 @@ class ConfigDBO extends HiveObject {
   @HiveField(39)
   bool? defaultToRawFoodUnits;
 
+  // Versioned DevNutrition preferences; nullable for existing installations.
+  @HiveField(40)
+  String? devNutritionJson;
+
   ConfigDBO(
     this.hasAcceptedDisclaimer,
     this.hasAcceptedPolicy,
@@ -226,6 +230,7 @@ class ConfigDBO extends HiveObject {
     this.policyNoticeRevisionSeen,
     this.healthDeletedWorkouts,
     this.defaultToRawFoodUnits,
+    this.devNutritionJson,
   });
 
   factory ConfigDBO.empty() =>
@@ -240,6 +245,7 @@ class ConfigDBO extends HiveObject {
     usesImperialFoodUnits: entity.usesImperialFoodUnits,
     usesImperialHeightUnits: entity.usesImperialHeightUnits,
     bodyWeightUnitIndex: entity.bodyWeightUnit.index,
+    devNutritionJson: entity.devNutritionJson,
   );
 
   factory ConfigDBO.fromJson(Map<String, dynamic> json) =>

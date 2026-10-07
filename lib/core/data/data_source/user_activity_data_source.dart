@@ -22,7 +22,17 @@ class UserActivityDataSource {
     List<UserActivityDBO> userActivityDBOList,
   ) async {
     log.fine('Adding new user activities to db');
-    await _userActivityBox.addAll(userActivityDBOList);
+    final keys = {
+      for (final e in _userActivityBox.toMap().entries) e.value.id: e.key,
+    };
+    for (final activity in userActivityDBOList) {
+      final key = keys[activity.id];
+      if (key != null) {
+        await _userActivityBox.put(key, activity);
+      } else {
+        keys[activity.id] = await _userActivityBox.add(activity);
+      }
+    }
   }
 
   Future<UserActivityDBO?> updateUserActivity(
@@ -32,8 +42,9 @@ class UserActivityDataSource {
     double? userKcal,
   }) async {
     log.fine('Updating user activity in db');
-    final existing =
-        _userActivityBox.values.firstWhereOrNull((dbo) => dbo.id == id);
+    final existing = _userActivityBox.values.firstWhereOrNull(
+      (dbo) => dbo.id == id,
+    );
     if (existing == null) return null;
     final updated = UserActivityDBO(
       existing.id,
@@ -105,14 +116,13 @@ class UserActivityDataSource {
         .toSet();
   }
 
-  Future<List<UserActivityDBO>> getRecentlyAddedUserActivity(
-      {int number = 100}) async {
+  Future<List<UserActivityDBO>> getRecentlyAddedUserActivity({
+    int number = 100,
+  }) async {
     final userActivities = _userActivityBox.values.toList();
 
     //  sort list by date descending and filter unique activities
-    userActivities.sort(
-      (a, b) => b.date.compareTo(a.date),
-    );
+    userActivities.sort((a, b) => b.date.compareTo(a.date));
 
     final filterActivityCodes = <String>{};
     final uniqueUserActivities = userActivities

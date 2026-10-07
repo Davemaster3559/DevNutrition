@@ -8,6 +8,7 @@ import 'package:opennutritracker/core/domain/usecase/get_config_usecase.dart';
 import 'package:opennutritracker/core/domain/usecase/get_intake_usecase.dart';
 import 'package:opennutritracker/features/add_meal/data/repository/products_repository.dart';
 import 'package:opennutritracker/features/add_meal/domain/entity/meal_entity.dart';
+import 'package:opennutritracker/features/quick_log/data/local_food_catalogue.dart';
 
 /// Output of a product/food search. [meals] is the deduplicated list shown
 /// to the user (custom-meal matches first, then remote results).
@@ -34,6 +35,7 @@ class SearchProductsUseCase {
   final RemoteSearchCacheDataSource _cachedOffMealDataSource;
   final RecipeDataSource _recipeDataSource;
   final GetConfigUsecase _getConfigUsecase;
+  final LocalFoodCatalogue? _catalogue;
 
   SearchProductsUseCase(
     this._productsRepository,
@@ -41,8 +43,9 @@ class SearchProductsUseCase {
     this._customMealDataSource,
     this._cachedOffMealDataSource,
     this._recipeDataSource,
-    this._getConfigUsecase,
-  );
+    this._getConfigUsecase, [
+    this._catalogue,
+  ]);
 
   /// [skipRemote] limits the search to local matches (custom meals, recipes,
   /// recent intake, cached results) and does not touch the network — used for
@@ -52,8 +55,12 @@ class SearchProductsUseCase {
     bool skipRemote = false,
   }) async {
     if (skipRemote) {
-      return _buildResult(searchString, const [],
-          remoteSkipped: true, cacheSource: MealSourceEntity.off);
+      return _buildResult(
+        searchString,
+        const [],
+        remoteSkipped: true,
+        cacheSource: MealSourceEntity.off,
+      );
     }
     final remote = await _safeRemoteCall(
       'OFF',
@@ -65,8 +72,11 @@ class SearchProductsUseCase {
     // get their timestamp refreshed and stay until 90 days after the
     // last selection.
     await _cacheRemoteResults(remote);
-    return _buildResult(searchString, remote,
-        cacheSource: MealSourceEntity.off);
+    return _buildResult(
+      searchString,
+      remote,
+      cacheSource: MealSourceEntity.off,
+    );
   }
 
   /// Searches the reference-food corpus. "FDC" here names the *data* (USDA
@@ -87,8 +97,12 @@ class SearchProductsUseCase {
     bool forResolution = false,
   }) async {
     if (skipRemote) {
-      return _buildResult(searchString, const [],
-          remoteSkipped: true, cacheSource: MealSourceEntity.fdc);
+      return _buildResult(
+        searchString,
+        const [],
+        remoteSkipped: true,
+        cacheSource: MealSourceEntity.fdc,
+      );
     }
     final remote = await _safeRemoteCall(
       'FDC',
@@ -98,8 +112,11 @@ class SearchProductsUseCase {
       ),
     );
     await _cacheRemoteResults(remote);
-    return _buildResult(searchString, remote,
-        cacheSource: MealSourceEntity.fdc);
+    return _buildResult(
+      searchString,
+      remote,
+      cacheSource: MealSourceEntity.fdc,
+    );
   }
 
   Future<void> _cacheRemoteResults(List<MealEntity> remote) async {
@@ -109,8 +126,9 @@ class SearchProductsUseCase {
     // earlier (its timestamp got bumped via the intent path) keeps that
     // newer timestamp even when a subsequent search re-includes it,
     // letting it remain at the top of the cache-sorted list.
-    await _cachedOffMealDataSource
-        .cacheFromSearch(remote.map(MealDBO.fromMealEntity));
+    await _cachedOffMealDataSource.cacheFromSearch(
+      remote.map(MealDBO.fromMealEntity),
+    );
   }
 
   /// Run a remote search and fall back to an empty list when the source
@@ -183,9 +201,13 @@ class SearchProductsUseCase {
     final recentIntake = await _getIntakeUsecase.getRecentIntake();
     final fromIntakeHistory = recentIntake
         .map((intake) => intake.meal)
-        .where((meal) => meal.source == MealSourceEntity.custom)
         .where((meal) => _mealMatchesSearch(meal, normalizedSearchString))
         .toList();
+    fromIntakeHistory.sort(
+      (a, b) => (a.source == MealSourceEntity.custom ? 0 : 1).compareTo(
+        b.source == MealSourceEntity.custom ? 0 : 1,
+      ),
+    );
 
     // Sorted with the most recently touched entries first so an item the
     // user just selected (logged) appears at the top of the next search
@@ -222,9 +244,11 @@ class SearchProductsUseCase {
         .getAllByMostRecentlyTouched()
         .map(MealEntity.fromMealDBO)
         .where((meal) => meal.source == cacheSource)
-        .where((meal) =>
-            meal.backendSource == null ||
-            config.isFoodSourceEnabled(meal.backendSource!))
+        .where(
+          (meal) =>
+              meal.backendSource == null ||
+              config.isFoodSourceEnabled(meal.backendSource!),
+        )
         .where((meal) => _mealMatchesSearch(meal, normalizedSearchString))
         .map((meal) => _freshest(meal, freshByKey))
         .toList();
@@ -235,13 +259,16 @@ class SearchProductsUseCase {
     // keeps the search list stable from the user's perspective ("the
     // version I saw yesterday is still at the top"). Fresh remote data
     // still wins on the per-item refresh path triggered by intake-add.
+    final reference = await _catalogue?.search(searchString) ?? <MealEntity>[];
     return SearchProductsResult(
       meals: _deduplicateMeals([
         ...fromCustomMealBox,
         ...fromRecipes,
         ...fromIntakeHistory,
+        ...reference.where((m) => m.backendSource == 'indb'),
         ...fromCache,
         ...remoteResults,
+        ...reference.where((m) => m.backendSource != 'indb'),
       ]),
       remoteSourceEmpty: remoteSourceEmpty,
     );
@@ -273,8 +300,19 @@ class SearchProductsUseCase {
   List<MealEntity> _deduplicateMeals(List<MealEntity> meals) {
     final seenKeys = <String>{};
     final uniqueMeals = <MealEntity>[];
+    final personalCodes = _catalogue == null
+        ? <String>{}
+        : {
+            for (final meal in meals)
+              if (meal.source == MealSourceEntity.custom && meal.code != null)
+                meal.code!,
+          };
 
     for (final meal in meals) {
+      if (meal.source != MealSourceEntity.custom &&
+          personalCodes.contains(meal.code)) {
+        continue;
+      }
       if (seenKeys.add(_dedupKey(meal))) {
         uniqueMeals.add(meal);
       }

@@ -1,4 +1,3 @@
-
 import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
@@ -72,6 +71,7 @@ class SpFoodDataSource {
     String searchString, {
     bool forResolution = false,
   }) async {
+    if (!locator.isRegistered<SupabaseClient>()) return const [];
     try {
       return await withRetry(() async {
         log.fine('Fetching Supabase food results');
@@ -151,6 +151,7 @@ class SpFoodDataSource {
   /// already owns that decision for the search itself and two answers would
   /// eventually disagree.
   Future<Map<int, String>> fetchPortionLabels(List<int> foodIds) async {
+    if (!locator.isRegistered<SupabaseClient>()) return const {};
     if (foodIds.isEmpty) return const {};
     final locale = _foodLocale();
     // English needs no lookup: the stored description is already English.
@@ -199,6 +200,7 @@ class SpFoodDataSource {
   Future<Map<int, List<MealPortionEntity>>?> fetchPortions(
     List<int> foodIds,
   ) async {
+    if (!locator.isRegistered<SupabaseClient>()) return const {};
     // Nothing to ask about is not a failure: an empty page has no record to
     // penalise or to spare.
     if (foodIds.isEmpty) return const {};
@@ -584,13 +586,16 @@ List<T> _rankAndTruncate<T>(
         portioned: hasPortion(item) == true ? 1 : 0,
       ),
   ];
-  mergeSort(decorated, compare: (a, b) {
-    final byScore = b.score.compareTo(a.score);
-    if (byScore != 0) return byScore;
-    final byLength = a.length.compareTo(b.length);
-    if (byLength != 0) return byLength;
-    return b.portioned.compareTo(a.portioned);
-  });
+  mergeSort(
+    decorated,
+    compare: (a, b) {
+      final byScore = b.score.compareTo(a.score);
+      if (byScore != 0) return byScore;
+      final byLength = a.length.compareTo(b.length);
+      if (byLength != 0) return byLength;
+      return b.portioned.compareTo(a.portioned);
+    },
+  );
   return [
     for (final entry in decorated.take(SPConst.maxNumberOfItems)) entry.item,
   ];

@@ -19,6 +19,7 @@ import 'package:opennutritracker/core/utils/csv_data_exporter.dart';
 import 'package:opennutritracker/core/utils/off_micronutrient_repair.dart';
 import 'package:opennutritracker/core/utils/user_image_storage.dart';
 import 'package:opennutritracker/features/settings/domain/export_import_failure.dart';
+import 'package:opennutritracker/features/quick_log/data/devnutrition_backup.dart';
 
 /// Opens the system file picker for a single file of any type and resolves
 /// to the pick, or to null when the user dismissed the picker.
@@ -27,6 +28,8 @@ typedef PickImportFile = Future<PlatformFile?> Function();
 Future<PlatformFile?> _pickAnyFile() => FilePicker.pickFile(type: FileType.any);
 
 class ImportDataUsecase {
+  final DevNutritionBackup? devNutritionBackup;
+  final Future<void> Function()? afterImport;
   final UserActivityRepository _userActivityRepository;
   final IntakeRepository _intakeRepository;
   final TrackedDayRepository _trackedDayRepository;
@@ -47,6 +50,8 @@ class ImportDataUsecase {
     this._weightLogRepository,
     this._customActivityTemplateRepository, {
     PickImportFile pickFile = _pickAnyFile,
+    this.devNutritionBackup,
+    this.afterImport,
   }) : _pickFile = pickFile;
 
   /// Imports user activity, intake, tracked day, and (optionally) recipe,
@@ -69,76 +74,70 @@ class ImportDataUsecase {
   ) async {
     final archive = await _pickAndDecodeArchive();
 
-    // Extract and process user activity data
-    final userActivityFile = archive.findFile(userActivityJsonFileName);
-    if (userActivityFile != null) {
-      final userActivityDBOs = _decodeJsonList(
-        userActivityFile,
-        UserActivityDBO.fromJson,
-      );
-      await _userActivityRepository.addAllUserActivityDBOs(userActivityDBOs);
-    } else {
-      throw _missingEntry(userActivityJsonFileName);
+    final devFile = archive.findFile('devnutrition.json');
+    final devJson = devFile == null
+        ? null
+        : Map<String, dynamic>.from(
+            jsonDecode(utf8.decode(devFile.content as List<int>)) as Map,
+          );
+    if (devJson != null) devNutritionBackup?.validate(devJson);
+
+    // Parse every dataset before the first database write. A malformed later
+    // file must not leave the active diary partly imported.
+    List<T> decode<T>(
+      String name,
+      T Function(Map<String, dynamic>) factory, {
+      bool required = false,
+    }) {
+      final entry = archive.findFile(name);
+      if (entry == null) {
+        if (required) throw _missingEntry(name);
+        return <T>[];
+      }
+      return _decodeJsonList(entry, factory);
     }
 
-    // Extract and process intake data. A bundle written by a build before
-    // #775 carries its Open Food Facts micronutrients in raw grams and no
-    // `dataVersion` on the meal; scale those rows on the way in, the same
-    // way the startup pass does for rows already on disk (#1152). A bundle
-    // from a repaired build carries the stamp and passes through unchanged.
-    final intakeFile = archive.findFile(userIntakeJsonFileName);
-    if (intakeFile != null) {
-      final intakeDBOs = _decodeJsonList(
-        intakeFile,
-        IntakeDBO.fromJson,
-      ).map(OffMicronutrientRepair.repairIntake).toList();
-      await _intakeRepository.addAllIntakeDBOs(intakeDBOs);
-    } else {
-      throw _missingEntry(userIntakeJsonFileName);
+    final activities = decode(
+      userActivityJsonFileName,
+      UserActivityDBO.fromJson,
+      required: true,
+    );
+    final intakes = decode(
+      userIntakeJsonFileName,
+      IntakeDBO.fromJson,
+      required: true,
+    ).map(OffMicronutrientRepair.repairIntake).toList();
+    final days = decode(
+      trackedDayJsonFileName,
+      TrackedDayDBO.fromJson,
+      required: true,
+    );
+    final recipes = decode(
+      recipeJsonFileName,
+      RecipeDBO.fromJson,
+    ).map(OffMicronutrientRepair.repairRecipe).toList();
+    final weights = decode(weightLogJsonFileName, WeightLogDBO.fromJson);
+    final templates = decode(
+      customActivityTemplateJsonFileName,
+      CustomActivityTemplateDBO.fromJson,
+    );
+
+    await _userActivityRepository.addAllUserActivityDBOs(activities);
+    await _intakeRepository.addAllIntakeDBOs(intakes);
+    await _trackedDayRepository.addAllTrackedDays(days);
+    if (archive.findFile(recipeJsonFileName) != null) {
+      await _recipeRepository.addAllRecipeDBOs(recipes);
+    }
+    if (archive.findFile(weightLogJsonFileName) != null) {
+      await _weightLogRepository.addAllEntries(weights);
+    }
+    if (archive.findFile(customActivityTemplateJsonFileName) != null) {
+      await _customActivityTemplateRepository.addAllTemplateDBOs(templates);
     }
 
-    // Extract and process tracked day data
-    final trackedDayFile = archive.findFile(trackedDayJsonFileName);
-    if (trackedDayFile != null) {
-      final trackedDayDBOs = _decodeJsonList(
-        trackedDayFile,
-        TrackedDayDBO.fromJson,
-      );
-      await _trackedDayRepository.addAllTrackedDays(trackedDayDBOs);
-    } else {
-      throw _missingEntry(trackedDayJsonFileName);
-    }
-
-    // Extract and process recipe data — optional so older zips still import.
-    // Ingredient snapshots get the same Open Food Facts repair as intakes.
-    final recipeFile = archive.findFile(recipeJsonFileName);
-    if (recipeFile != null) {
-      final recipeDBOs = _decodeJsonList(
-        recipeFile,
-        RecipeDBO.fromJson,
-      ).map(OffMicronutrientRepair.repairRecipe).toList();
-      await _recipeRepository.addAllRecipeDBOs(recipeDBOs);
-    }
-
-    // Extract and process weight log data — optional so older zips still import.
-    final weightLogFile = archive.findFile(weightLogJsonFileName);
-    if (weightLogFile != null) {
-      final weightLogDBOs = _decodeJsonList(
-        weightLogFile,
-        WeightLogDBO.fromJson,
-      );
-      await _weightLogRepository.addAllEntries(weightLogDBOs);
-    }
-
-    // Extract and process Custom activity template data (#70 follow-up)
-    // — also optional so zips produced before templates landed still import.
-    final templateFile = archive.findFile(customActivityTemplateJsonFileName);
-    if (templateFile != null) {
-      final templateDBOs = _decodeJsonList(
-        templateFile,
-        CustomActivityTemplateDBO.fromJson,
-      );
-      await _customActivityTemplateRepository.addAllTemplateDBOs(templateDBOs);
+    // Restore any user-attached photos — recipes under `recipe_images/`
+    if (devJson != null && devNutritionBackup != null) {
+      await devNutritionBackup!.restore(devJson);
     }
 
     // Restore any user-attached photos — recipes under `recipe_images/`
@@ -164,6 +163,7 @@ class ImportDataUsecase {
       await destFile.writeAsBytes(entry.content as List<int>, flush: true);
     }
 
+    await afterImport?.call();
     return true;
   }
 

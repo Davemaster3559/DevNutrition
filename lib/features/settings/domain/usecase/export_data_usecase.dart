@@ -19,6 +19,7 @@ import 'package:opennutritracker/core/utils/csv_data_exporter.dart';
 import 'package:opennutritracker/core/utils/export_write_verifier.dart';
 import 'package:opennutritracker/core/utils/user_image_storage.dart';
 import 'package:opennutritracker/features/settings/domain/export_import_failure.dart';
+import 'package:opennutritracker/features/quick_log/data/devnutrition_backup.dart';
 
 /// The two export shapes available from Settings → Export / Import App Data.
 /// JSON is the canonical backup-and-restore format the app re-imports from;
@@ -26,6 +27,7 @@ import 'package:opennutritracker/features/settings/domain/export_import_failure.
 enum ExportFormat { json, csv }
 
 class ExportDataUsecase {
+  final DevNutritionBackup? devNutritionBackup;
   final UserActivityRepository _userActivityRepository;
   final IntakeRepository _intakeRepository;
   final TrackedDayRepository _trackedDayRepository;
@@ -41,8 +43,9 @@ class ExportDataUsecase {
     this._recipeRepository,
     this._customMealDataSource,
     this._weightLogRepository,
-    this._customActivityTemplateRepository,
-  );
+    this._customActivityTemplateRepository, {
+    this.devNutritionBackup,
+  });
 
   /// Exports user activity, intake, tracked day, recipe, weight-log and
   /// Custom activity template data to a zip at a user-specified location,
@@ -196,6 +199,10 @@ class ExportDataUsecase {
     // CSV path under Import Custom Food Data.
     if (format == ExportFormat.json) {
       final fullRecipes = _recipeRepository.getAllRecipesDBO();
+      if (devNutritionBackup != null) {
+        final extra = utf8.encode(jsonEncode(devNutritionBackup!.snapshot()));
+        archive.addFile(ArchiveFile('devnutrition.json', extra.length, extra));
+      }
       final recipeBytes = utf8.encode(
         jsonEncode(fullRecipes.map((r) => r.toJson()).toList()),
       );

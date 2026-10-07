@@ -59,7 +59,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.opennutritracker.ont.opennutritracker"
+        applicationId "com.devnutrition.app"
         // The health package's Health Connect client requires API 26; Flutter's
         // default is 24, so the floor is pinned here.
         //

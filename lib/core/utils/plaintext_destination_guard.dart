@@ -129,7 +129,15 @@ class PlaintextDestinationGuard {
     if (url.scheme != 'http') return url;
 
     final host = url.host;
-    final literal = InternetAddress.tryParse(_withZoneUnescaped(host));
+    final unescapedHost = _withZoneUnescaped(host);
+    // Windows cannot parse named IPv6 zones. The zone selects an interface;
+    // the numeric address still determines private/public scope. Keep the
+    // original URL, including its zone, for the actual socket connection.
+    final literal =
+        InternetAddress.tryParse(unescapedHost) ??
+        (unescapedHost.contains(':') && unescapedHost.contains('%')
+            ? InternetAddress.tryParse(unescapedHost.split('%').first)
+            : null);
     if (literal != null) {
       // No lookup to do, and nothing to pin — the user typed the address.
       if (isPrivateDestination(literal)) return url;

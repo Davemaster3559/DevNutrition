@@ -125,6 +125,8 @@ class OffMicronutrientRepair {
       type: intake.type,
       meal: meal,
       dateTime: intake.dateTime,
+      displayUnit: intake.displayUnit,
+      baseAmountPerDisplayUnit: intake.baseAmountPerDisplayUnit,
     );
   }
 
@@ -174,6 +176,8 @@ class OffMicronutrientRepair {
       servingsCount: recipe.servingsCount,
       tags: recipe.tags,
       imagePath: recipe.imagePath,
+      kind: recipe.kind,
+      portionUnit: recipe.portionUnit,
     );
   }
 

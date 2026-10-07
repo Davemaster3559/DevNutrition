@@ -1,19 +1,33 @@
 import 'package:opennutritracker/core/data/repository/tracked_day_repository.dart';
+import 'package:opennutritracker/core/data/repository/config_repository.dart';
+import 'package:opennutritracker/features/quick_log/domain/devnutrition_preferences.dart';
 
 class AddTrackedDayUsecase {
   final TrackedDayRepository _trackedDayRepository;
 
-  AddTrackedDayUsecase(this._trackedDayRepository);
+  final ConfigRepository? _configRepository;
+
+  AddTrackedDayUsecase(this._trackedDayRepository, [this._configRepository]);
+
+  Future<bool> _creditsExercise() async {
+    final config = await _configRepository?.getConfig();
+    return config?.devNutritionJson == null ||
+        DevNutritionPreferences.decode(
+          config!.devNutritionJson,
+        ).eatBackExercise;
+  }
 
   Future<void> updateDayCalorieGoal(DateTime day, double calorieGoal) async {
     await _trackedDayRepository.updateDayCalorieGoal(day, calorieGoal);
   }
 
   Future<void> increaseDayCalorieGoal(DateTime day, double amount) async {
+    if (!await _creditsExercise()) return;
     await _trackedDayRepository.increaseDayCalorieGoal(day, amount);
   }
 
   Future<void> reduceDayCalorieGoal(DateTime day, double amount) async {
+    if (!await _creditsExercise()) return;
     await _trackedDayRepository.reduceDayCalorieGoal(day, amount);
   }
 
@@ -71,6 +85,10 @@ class AddTrackedDayUsecase {
     double? fatAmount,
     double? proteinAmount,
   }) async {
+    if ((await _configRepository?.getConfig())?.devNutritionJson != null) {
+      return;
+    }
+    if (!await _creditsExercise()) return;
     await _trackedDayRepository.increaseDayMacroGoal(
       day,
       carbGoal: carbsAmount,
@@ -85,6 +103,10 @@ class AddTrackedDayUsecase {
     double? fatAmount,
     double? proteinAmount,
   }) async {
+    if ((await _configRepository?.getConfig())?.devNutritionJson != null) {
+      return;
+    }
+    if (!await _creditsExercise()) return;
     await _trackedDayRepository.reduceDayMacroGoal(
       day,
       carbGoal: carbsAmount,
@@ -156,8 +178,19 @@ class AddTrackedDayUsecase {
   }
 
   /// Overwrite cached tracked values with actual sums to fix stale data (#182)
-  Future<void> reconcileDayTracked(DateTime day,
-      double calories, double carbs, double fat, double protein) async {
-    await _trackedDayRepository.reconcileDayTracked(day, calories, carbs, fat, protein);
+  Future<void> reconcileDayTracked(
+    DateTime day,
+    double calories,
+    double carbs,
+    double fat,
+    double protein,
+  ) async {
+    await _trackedDayRepository.reconcileDayTracked(
+      day,
+      calories,
+      carbs,
+      fat,
+      protein,
+    );
   }
 }

@@ -146,8 +146,6 @@ class _StreakCard extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final windowStart =
-        DateTime(today.year, today.month, today.day - (rangeDays - 1));
     final weekEnd = today;
     final weekStart = weekEnd.subtract(const Duration(days: 6));
 
@@ -158,7 +156,6 @@ class _StreakCard extends StatelessWidget {
       for (final d in days)
         if (onTrack(d)) DateTime(d.day.year, d.day.month, d.day.day),
     };
-    final stats = streakStats(onTrackDays, windowStart, today);
 
     // Week-over-week on-track delta (this week vs the prior week).
     // Suppress the chip when the prior week is empty — a new user with
@@ -181,7 +178,7 @@ class _StreakCard extends StatelessWidget {
             padding: const EdgeInsets.all(Dimens.spacing12),
             decoration: BoxDecoration(
                 color: accent.withValues(alpha: 0.16), shape: BoxShape.circle),
-            child: Icon(Icons.local_fire_department_rounded,
+            child: Icon(Icons.calendar_month_rounded,
                 color: accent, size: 28),
           ),
           const SizedBox(width: Dimens.spacing16),
@@ -189,8 +186,8 @@ class _StreakCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${stats.current}', style: text.headlineSmall),
-                Text(S.of(context).trendsDayStreakLabel,
+                Text('${onTrackDays.length} / ${days.length}', style: text.headlineSmall),
+                Text(S.of(context).devAdherence,
                     style: text.bodyMedium?.copyWith(color: palette.textMuted)),
               ],
             ),
@@ -203,10 +200,6 @@ class _StreakCard extends StatelessWidget {
                 _WeekDeltaChip(delta: delta, palette: palette),
                 const SizedBox(height: 6),
               ],
-              Text(
-                '${S.of(context).trendsBestStreakLabel} ${stats.longest}',
-                style: text.bodySmall?.copyWith(color: palette.textMuted),
-              ),
             ],
           ),
         ],

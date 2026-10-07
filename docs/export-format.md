@@ -1,7 +1,7 @@
 # Export bundle format
 
-This document describes the structure of the data export that **Settings →
-Export / Import App Data → Export** produces. It exists for the same reason
+This document describes the structure of the data export that **Settings â†’
+Export / Import App Data â†’ Export** produces. It exists for the same reason
 issue #40 asked for it: people who want to keep their nutrition history in a
 plaintext format they can sync via Syncthing, open in a spreadsheet, or feed
 into other tooling deserve a stable schema they can read against. Issue #132
@@ -11,11 +11,11 @@ symmetric. CSV is a second bundle format rather than an addition to the JSON one
 ## Zip layout
 
 The export is a single `.zip` file (default filename
-`opennutritracker-export.zip`).
+`devnutrition-backup.zip` in DevNutrition).
 
-**You pick one format, and the bundle carries only that one.** Settings → Export
+**You pick one format, and the bundle carries only that one.** Settings â†’ Export
 offers a JSON / CSV toggle, and the bundle contains either the JSON files or the
-CSV files — never both side by side. A tool that unzips expecting a JSON file
+CSV files â€” never both side by side. A tool that unzips expecting a JSON file
 next to its CSV counterpart will not find one.
 
 **JSON bundle**
@@ -27,7 +27,8 @@ next to its CSV counterpart will not find one.
 | `user_tracked_day.json`          | Canonical format the app re-imports from.                |
 | `user_recipes.json`              | Recipes only. Nested-ingredient shape, no CSV counterpart. |
 | `weight_log.json`                | Weight history.                                          |
-| `custom_activity_templates.json` | Saved custom activities — name and typical kcal.         |
+| `custom_activity_templates.json` | Saved custom activities â€” name and typical kcal.         |
+| `devnutrition.json`              | DevNutrition version 1: active profile, custom foods, goals, measures, pins, usual servings, water and fasting. |
 
 **CSV bundle**
 
@@ -35,24 +36,24 @@ next to its CSV counterpart will not find one.
 | ----------------------- | ------------------------------------------------------------ |
 | `user_intake.csv`       | Same rows as the JSON, with the meal and its nutriments flattened. |
 | `user_activity.csv`     | Flat activities.                                             |
-| `user_tracked_day.csv`  | Flat tracked days — **lossy, see [Round-trip guarantee](#round-trip-guarantee)**. |
+| `user_tracked_day.csv`  | Flat tracked days â€” **lossy, see [Round-trip guarantee](#round-trip-guarantee)**. |
 
 **Photos travel with the JSON bundle only.** User-attached photos are added under
 `recipe_images/` and `meal_images/` when you export as JSON, gathered from three places: recipes,
-saved custom meals, and **the diary entries themselves**. That third source is not redundant — a
+saved custom meals, and **the diary entries themselves**. That third source is not redundant â€” a
 custom meal logged with *Save for next time* off keeps its photo on the entry without leaving a
 saved meal behind, so gathering only from the first two put the filename in the JSON and left the
 bytes out of the zip ([#1061](https://github.com/simonoppowa/OpenNutriTracker/issues/1061)). A
 photo reachable from any of the three is in the bundle exactly once.
 
-A CSV export carries none, and the CSV importer does not restore them — another reason to use
+A CSV export carries none, and the CSV importer does not restore them â€” another reason to use
 JSON for anything you intend to restore from.
 
-The **profile box** — height, birthday, PAL, goal — is intentionally not
+The **profile box** â€” height, birthday, PAL, goal â€” is intentionally not
 included; see `lib/core/data/data_source/user_data_source.dart`. Note this is the
 profile only: your logged **weight history** *is* exported, as `weight_log.json`.
 
-The user can re-import the same zip via **Settings → Import**, in either format.
+The user can re-import the same zip via **Settings â†’ Import**, in either format.
 The CSV files also exist so a spreadsheet, a Syncthing-style backup, or external
 tooling can read the same data without going through Hive.
 
@@ -60,7 +61,7 @@ tooling can read the same data without going through Hive.
 
 The JSON files are direct serializations of the Hive DBO classes via
 `json_serializable`, so the source of truth lives in
-`lib/core/data/dbo/`. The shapes below are summaries — fields may be added in
+`lib/core/data/dbo/`. The shapes below are summaries â€” fields may be added in
 future versions, and unknown fields are ignored on import.
 
 ### `user_intake.json`
@@ -126,7 +127,7 @@ Array of intake records:
 The `*100` micronutrient fields are stored in the app's units: milligrams
 for cholesterol, the minerals and vitamins C, B6 and niacin, micrograms for
 vitamins A, D and B12. Builds up to 2.3.0 wrote Open Food Facts rows with
-those fields in the raw grams the API sends — a thousand times too small for
+those fields in the raw grams the API sends â€” a thousand times too small for
 the milligram fields, a million for the microgram ones
 ([#775](https://github.com/simonoppowa/OpenNutriTracker/pull/775)).
 
@@ -138,7 +139,7 @@ scaled into app units on import; a row at `1` or above is taken as-is. Rows
 from every other source are never scaled. Tooling that writes `off` rows in
 app units should set the version to `1`, or the importer will scale them a
 second time. The same repair runs once over the on-device data on the first
-launch after the upgrade — the diary, the Open Food Facts cache, the saved
+launch after the upgrade â€” the diary, the Open Food Facts cache, the saved
 custom meals and the recipe library. Saved custom meals are not part of the
 bundle, so they are repaired on the device only (the app itself never saves
 an `off` product for reuse, so that box is covered for completeness rather
@@ -257,11 +258,11 @@ Header lookup is case-insensitive.
 | `iron_per_100g`                 | number | no       | mg.                                            |
 | `zinc_per_100g`                 | number | no       | mg.                                            |
 | `phosphorus_per_100g`           | number | no       | mg.                                            |
-| `vitamin_a_per_100g`            | number | no       | µg RAE.                                        |
+| `vitamin_a_per_100g`            | number | no       | Âµg RAE.                                        |
 | `vitamin_c_per_100g`            | number | no       | mg.                                            |
-| `vitamin_d_per_100g`            | number | no       | µg.                                            |
+| `vitamin_d_per_100g`            | number | no       | Âµg.                                            |
 | `vitamin_b6_per_100g`           | number | no       | mg.                                            |
-| `vitamin_b12_per_100g`          | number | no       | µg.                                            |
+| `vitamin_b12_per_100g`          | number | no       | Âµg.                                            |
 | `niacin_per_100g`               | number | no       | mg (B3).                                       |
 | `meal_data_version`             | number | no       | See [Micronutrient units](#micronutrient-units-on-open-food-facts-rows). |
 
@@ -300,28 +301,53 @@ Header lookup is case-insensitive.
 ## Round-trip guarantee
 
 Intakes and activities round-trip cleanly through
-`lib/core/utils/csv_data_exporter.dart` — exporting a list of DBOs and parsing
+`lib/core/utils/csv_data_exporter.dart` â€” exporting a list of DBOs and parsing
 the resulting CSV yields structurally equal DBOs (modulo
 empty-string-vs-null normalisation on nullable fields). The unit test
 `test/unit_test/csv_data_exporter_test.dart` pins this behaviour.
 
 **Tracked days do not round-trip.** `trackedDayColumns` carries nine columns
-while `TrackedDayDBO` has nineteen fields: the ten per-nutrient goals — fibre,
+while `TrackedDayDBO` has nineteen fields: the ten per-nutrient goals â€” fibre,
 saturated fat, sugars, sodium, calcium, iron, potassium, magnesium, vitamin B12
-and vitamin D — have no column and are lost on a CSV export. The JSON bundle
+and vitamin D â€” have no column and are lost on a CSV export. The JSON bundle
 keeps them. Use JSON if you intend to restore from the bundle rather than read
 it in a spreadsheet.
 
 **CSV import works.** `ImportDataUsecase.importDataCsv` reads `user_intake.csv`,
-`user_activity.csv` and `user_tracked_day.csv`, and Settings → Import uses the
+`user_activity.csv` and `user_tracked_day.csv`, and Settings â†’ Import uses the
 same format toggle as the export. External tooling can therefore write either
-shape — subject to the tracked-day loss above.
+shape â€” subject to the tracked-day loss above.
 
 ## Syncthing-friendly notes
 
-The export is deliberately plain UTF-8 inside a normal zip — no binary
-encoding, no app-specific framing — so it is safe to leave a copy in a
+The export is deliberately plain UTF-8 inside a normal zip â€” no binary
+encoding, no app-specific framing â€” so it is safe to leave a copy in a
 Syncthing folder and let the same bundle move between devices. The JSON
 files re-import losslessly; the CSV files are stable across versions
 (columns can be added at the end, never reordered or removed without a
 schema bump).
+
+## DevNutrition extension (version 1)
+
+`devnutrition.json` adds `version: 1`, `appConfig`, `profileConfig`, `user`,
+`water`, `fasting` and `foods` to the JSON ZIP. The first five datasets are
+arrays of `{key, value}` entries using the respective generated DBO JSON shapes;
+`foods` contains MealDBO objects. Settings include a version-1 `devNutritionJson`
+string: calorie/protein/carbohydrate/fat/target-weight goals, exercise adjustment,
+seeded flag, ordered pins, per-food household conversions, usual servings and
+last flour/rice product codes. Water/fasting histories merge by record id rather
+than installation-specific Hive keys. Device-local reporting and Health Connect
+consent are cleared on restore. Each active profile is exported separately.
+
+Intake JSON optionally carries `displayUnit` and `baseAmountPerDisplayUnit`.
+The stored `amount` still uses canonical grams/ml; displayed quantity is
+`amount / baseAmountPerDisplayUnit`. Recipe JSON optionally carries `kind`
+(`recipe` or `preset`) and `portionUnit` (e.g. `katori`). Older records default
+to `recipe`/`serving`. Intake and recipe ingredients contain frozen MealDBO
+snapshots, including nullable nutrients and source provenance. Source edits
+do not rewrite past nutrition.
+
+The JSON importer validates every dataset before database writes, merges stable
+record ids, restores settings and recomputes daily known-nutrient totals from
+the merged diary. Pre-extension upstream ZIPs remain accepted. CSV does not
+carry these nested structures and is not a complete DevNutrition backup.

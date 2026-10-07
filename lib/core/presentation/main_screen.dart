@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:opennutritracker/core/domain/usecase/get_config_usecase.dart';
-import 'package:opennutritracker/core/presentation/widgets/add_item_bottom_sheet.dart';
+import 'package:opennutritracker/features/quick_log/presentation/quick_log_screen.dart';
+import 'package:opennutritracker/features/quick_log/data/quick_log_repository.dart';
 import 'package:opennutritracker/core/presentation/widgets/demo_mode_banner.dart';
 import 'package:opennutritracker/core/styles/app_palette.dart';
 import 'package:opennutritracker/core/utils/health_rationale_service.dart';
 import 'package:opennutritracker/core/utils/locator.dart';
-import 'package:opennutritracker/core/utils/meal_type_suggester.dart';
 import 'package:opennutritracker/core/utils/navigation_options.dart';
 import 'package:opennutritracker/features/diary/diary_page.dart';
 import 'package:opennutritracker/core/presentation/widgets/home_appbar.dart';
@@ -73,6 +73,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   // restore this by calling the dialog again. What is gone is one call, not
   // the ability to notify.
   Future<void> _loadConfigDrivenUi() async {
+    await locator<QuickLogRepository>().seed();
     final config = await locator<GetConfigUsecase>().getConfig();
     if (!mounted) return;
     setState(() => _isDemoData = config.isDemoData);
@@ -137,7 +138,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         identifier: 'fab-add-item',
         child: FloatingActionButton(
           onPressed: () => _onFabPressed(context),
-          tooltip: S.of(context).addLabel,
+          tooltip: S.of(context).devQuickLog,
           child: const Icon(Icons.add, size: 30),
         ),
       ),
@@ -206,20 +207,9 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _onFabPressed(BuildContext context) async {
-    final config = await locator<GetConfigUsecase>().getConfig();
-    if (!context.mounted) return;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return AddItemBottomSheet(
-          day: DateTime.now(),
-          showActivityTracking: config.showActivityTracking,
-          usesImperialUnits: config.usesImperialFoodUnits,
-          suggestedType: MealTypeSuggester.suggestFromTime(DateTime.now()),
-        );
-      },
-    );
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const QuickLogScreen()));
   }
 }
 

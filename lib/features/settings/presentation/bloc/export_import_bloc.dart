@@ -16,7 +16,7 @@ part 'export_import_event.dart';
 part 'export_import_state.dart';
 
 class ExportImportBloc extends Bloc<ExportImportEvent, ExportImportState> {
-  static const exportZipFileName = 'opennutritracker-export.zip';
+  static const exportZipFileName = 'devnutrition-backup.zip';
   static const userActivityJsonFileName = 'user_activity.json';
   static const userIntakeJsonFileName = 'user_intake.json';
   static const trackedDayJsonFileName = 'user_tracked_day.json';
@@ -104,11 +104,13 @@ class ExportImportBloc extends Bloc<ExportImportEvent, ExportImportState> {
           // User cancelled the file picker — go back to initial.
           emit(ExportImportInitial());
         } else {
-          emit(CsvImportResultState(
-            imported: result.imported,
-            skipped: result.skipped,
-            anyHadBarcode: result.anyImportedHadBarcode,
-          ));
+          emit(
+            CsvImportResultState(
+              imported: result.imported,
+              skipped: result.skipped,
+              anyHadBarcode: result.anyImportedHadBarcode,
+            ),
+          );
         }
       } catch (e, stackTrace) {
         _log.severe('Import meals CSV failed', e, stackTrace);
@@ -123,10 +125,12 @@ class ExportImportBloc extends Bloc<ExportImportEvent, ExportImportState> {
         if (result == null) {
           emit(ExportImportInitial());
         } else {
-          emit(RecipeCsvImportResultState(
-            imported: result.imported,
-            skipped: result.skippedRows,
-          ));
+          emit(
+            RecipeCsvImportResultState(
+              imported: result.imported,
+              skipped: result.skippedRows,
+            ),
+          );
         }
       } catch (e, stackTrace) {
         _log.severe('Import recipes CSV failed', e, stackTrace);
@@ -147,8 +151,7 @@ class ExportImportBloc extends Bloc<ExportImportEvent, ExportImportState> {
     on<DownloadSampleRecipesCsvEvent>((event, emit) async {
       try {
         emit(ExportImportLoadingState());
-        final saved =
-            await _downloadSampleCsvUsecase.downloadRecipeSample();
+        final saved = await _downloadSampleCsvUsecase.downloadRecipeSample();
         emit(saved ? ExportImportSuccess() : ExportImportInitial());
       } catch (e, stackTrace) {
         emit(_failed('Download recipes CSV sample', e, stackTrace));
@@ -175,11 +178,13 @@ class ExportImportBloc extends Bloc<ExportImportEvent, ExportImportState> {
         } else if (result.imported == 0) {
           emit(JsonImportErrorState(result.errorMessages));
         } else {
-          emit(JsonImportResultState(
-            imported: result.imported,
-            savedAsCustomMeals: result.savedAsCustomMeals,
-            errorMessages: result.errorMessages,
-          ));
+          emit(
+            JsonImportResultState(
+              imported: result.imported,
+              savedAsCustomMeals: result.savedAsCustomMeals,
+              errorMessages: result.errorMessages,
+            ),
+          );
         }
       } catch (e, stackTrace) {
         _log.severe('Import meals JSON failed', e, stackTrace);
@@ -196,11 +201,13 @@ class ExportImportBloc extends Bloc<ExportImportEvent, ExportImportState> {
         } else if (result.imported == 0) {
           emit(RecipeJsonImportErrorState(result.errorMessages));
         } else {
-          emit(RecipeJsonImportResultState(
-            imported: result.imported,
-            skipped: result.skippedRecipes,
-            errorMessages: result.errorMessages,
-          ));
+          emit(
+            RecipeJsonImportResultState(
+              imported: result.imported,
+              skipped: result.skippedRecipes,
+              errorMessages: result.errorMessages,
+            ),
+          );
         }
       } catch (e, stackTrace) {
         _log.severe('Import recipes JSON failed', e, stackTrace);
@@ -213,8 +220,7 @@ class ExportImportBloc extends Bloc<ExportImportEvent, ExportImportState> {
         emit(ExportImportLoadingState());
         // Reuses the meals download usecase shape — recipes share the
         // same single-file save flow.
-        final saved =
-            await _downloadSampleJsonUsecase.downloadRecipeSample();
+        final saved = await _downloadSampleJsonUsecase.downloadRecipeSample();
         emit(saved ? ExportImportSuccess() : ExportImportInitial());
       } catch (e, stackTrace) {
         emit(_failed('Download recipes JSON sample', e, stackTrace));

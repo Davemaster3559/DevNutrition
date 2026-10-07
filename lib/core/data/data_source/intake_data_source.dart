@@ -22,13 +22,24 @@ class IntakeDataSource {
 
   Future<void> addAllIntakes(List<IntakeDBO> intakeDBOList) async {
     log.fine('Adding new intake items to db');
-    await _intakeBox.addAll(intakeDBOList);
+    final keys = {
+      for (final e in _intakeBox.toMap().entries) e.value.id: e.key,
+    };
+    for (final intake in intakeDBOList) {
+      final key = keys[intake.id];
+      if (key != null) {
+        await _intakeBox.put(key, intake);
+      } else {
+        keys[intake.id] = await _intakeBox.add(intake);
+      }
+    }
   }
 
   Future<void> deleteIntakeFromId(String intakeId) async {
     log.fine('Deleting intake item from db');
-    final toDelete =
-        _intakeBox.values.where((dbo) => dbo.id == intakeId).toList();
+    final toDelete = _intakeBox.values
+        .where((dbo) => dbo.id == intakeId)
+        .toList();
     for (final element in toDelete) {
       await element.delete();
     }
@@ -49,6 +60,8 @@ class IntakeDataSource {
       return null;
     }
     intakeObject.$2.amount = fields['amount'] ?? intakeObject.$2.amount;
+    intakeObject.$2.type = fields['type'] ?? intakeObject.$2.type;
+    intakeObject.$2.dateTime = fields['dateTime'] ?? intakeObject.$2.dateTime;
     await _intakeBox.putAt(intakeObject.$1, intakeObject.$2);
     return _intakeBox.getAt(intakeObject.$1);
   }
@@ -110,13 +123,19 @@ class IntakeDataSource {
         .toList();
 
     // Surface custom meals before remote-sourced results.
-    final custom = uniqueIntake.where((i) => i.meal.source == MealSourceDBO.custom).toList();
-    final others = uniqueIntake.where((i) => i.meal.source != MealSourceDBO.custom).toList();
+    final custom = uniqueIntake
+        .where((i) => i.meal.source == MealSourceDBO.custom)
+        .toList();
+    final others = uniqueIntake
+        .where((i) => i.meal.source != MealSourceDBO.custom)
+        .toList();
     return [...custom, ...others].take(number).toList();
   }
 
   Future<List<IntakeDBO>> getCustomMealIntakes() async {
-    return _intakeBox.values.where((dbo) => dbo.meal.source == MealSourceDBO.custom).toList();
+    return _intakeBox.values
+        .where((dbo) => dbo.meal.source == MealSourceDBO.custom)
+        .toList();
   }
 
   /// Replace the denormalised [MealDBO] snapshot on every intake whose
@@ -145,6 +164,8 @@ class IntakeDataSource {
         type: dbo.type,
         meal: toMeal,
         dateTime: dbo.dateTime,
+        displayUnit: dbo.displayUnit,
+        baseAmountPerDisplayUnit: dbo.baseAmountPerDisplayUnit,
       );
       await _intakeBox.put(entry.key, updated);
       rewrites.add((dbo, updated));

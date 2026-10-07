@@ -1,14 +1,12 @@
 part of 'recipe_builder_bloc.dart';
 
-enum SaveError {
-  nameRequired,
-  needsIngredients,
-  invalidTotalWeight,
-  unknown,
-}
+enum SaveError { nameRequired, needsIngredients, invalidTotalWeight, unknown }
 
 class RecipeBuilderState extends Equatable {
   final String? id;
+  final String kind;
+  final String portionUnit;
+  final DateTime? createdAt;
   final String name;
   final String? description;
   final int? servingsCount;
@@ -25,6 +23,9 @@ class RecipeBuilderState extends Equatable {
   final String? errorMessage;
 
   const RecipeBuilderState({
+    this.kind = 'recipe',
+    this.portionUnit = 'serving',
+    this.createdAt,
     required this.id,
     required this.name,
     required this.description,
@@ -43,24 +44,27 @@ class RecipeBuilderState extends Equatable {
   });
 
   factory RecipeBuilderState.initial() => RecipeBuilderState(
-        id: null,
-        name: '',
-        description: null,
-        servingsCount: null,
-        ingredients: const [],
-        totalWeightG: 0,
-        totalWeightOverridden: false,
-        aggregatedNutrimentsPer100: MealNutrimentsEntity.empty(),
-        tags: const [],
-        imagePath: null,
-        isExistingRecipe: false,
-        isSaving: false,
-        didSave: false,
-        saveError: null,
-        errorMessage: null,
-      );
+    id: null,
+    name: '',
+    description: null,
+    servingsCount: null,
+    ingredients: const [],
+    totalWeightG: 0,
+    totalWeightOverridden: false,
+    aggregatedNutrimentsPer100: MealNutrimentsEntity.empty(),
+    tags: const [],
+    imagePath: null,
+    isExistingRecipe: false,
+    isSaving: false,
+    didSave: false,
+    saveError: null,
+    errorMessage: null,
+  );
 
   RecipeBuilderState copyWith({
+    String? kind,
+    String? portionUnit,
+    DateTime? createdAt,
     String? id,
     String? name,
     String? description,
@@ -81,11 +85,15 @@ class RecipeBuilderState extends Equatable {
     bool clearImagePath = false,
   }) {
     return RecipeBuilderState(
+      kind: kind ?? this.kind,
+      portionUnit: portionUnit ?? this.portionUnit,
+      createdAt: createdAt ?? this.createdAt,
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
-      servingsCount:
-          clearServingsCount ? null : (servingsCount ?? this.servingsCount),
+      servingsCount: clearServingsCount
+          ? null
+          : (servingsCount ?? this.servingsCount),
       ingredients: ingredients ?? this.ingredients,
       totalWeightG: totalWeightG ?? this.totalWeightG,
       totalWeightOverridden:
@@ -104,20 +112,23 @@ class RecipeBuilderState extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        description,
-        servingsCount,
-        ingredients,
-        totalWeightG,
-        totalWeightOverridden,
-        aggregatedNutrimentsPer100,
-        tags,
-        imagePath,
-        isExistingRecipe,
-        isSaving,
-        didSave,
-        saveError,
-        errorMessage,
-      ];
+    kind,
+    portionUnit,
+    createdAt,
+    id,
+    name,
+    description,
+    servingsCount,
+    ingredients,
+    totalWeightG,
+    totalWeightOverridden,
+    aggregatedNutrimentsPer100,
+    tags,
+    imagePath,
+    isExistingRecipe,
+    isSaving,
+    didSave,
+    saveError,
+    errorMessage,
+  ];
 }

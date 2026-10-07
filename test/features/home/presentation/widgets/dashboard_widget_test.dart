@@ -3,24 +3,28 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:opennutritracker/core/domain/entity/kcal_goal_breakdown_entity.dart';
-import 'package:opennutritracker/core/domain/usecase/get_kcal_goal_breakdown_usecase.dart';
+import 'package:opennutritracker/core/data/data_source/config_data_source.dart';
+import 'package:opennutritracker/core/data/dbo/config_dbo.dart';
 import 'package:opennutritracker/core/utils/energy_unit_provider.dart';
 import 'package:opennutritracker/core/utils/locator.dart';
 import 'package:opennutritracker/features/home/presentation/widgets/dashboard_widget.dart';
-import 'package:opennutritracker/features/settings/presentation/widgets/kcal_goal_info_screen.dart';
+import 'package:opennutritracker/features/quick_log/data/quick_log_repository.dart';
+import 'package:opennutritracker/features/quick_log/domain/devnutrition_preferences.dart';
+import 'package:opennutritracker/features/quick_log/presentation/goals_screen.dart';
 import 'package:opennutritracker/generated/l10n.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../fixture/user_entity_fixtures.dart';
-
-class _FakeBreakdownUsecase extends Fake implements GetKcalGoalBreakdownUsecase {
-  final KcalGoalBreakdownEntity breakdown;
-
-  _FakeBreakdownUsecase(this.breakdown);
-
+class _FakeConfig extends Fake implements ConfigDataSource {
   @override
-  Future<KcalGoalBreakdownEntity> getBreakdown() async => breakdown;
+  Future<ConfigDBO> getConfig() async => ConfigDBO.empty();
+}
+
+class _FakeQuickLog extends Fake implements QuickLogRepository {
+  @override
+  ConfigDataSource get config => _FakeConfig();
+  @override
+  Future<DevNutritionPreferences> preferences() async =>
+      const DevNutritionPreferences();
 }
 
 Widget _wrap(Widget child) {
@@ -41,14 +45,7 @@ Widget _wrap(Widget child) {
 
 void main() {
   setUp(() {
-    // The gauge navigates to KcalGoalInfoScreen, which pulls its usecase
-    // from the locator when none is injected.
-    locator.registerSingleton<GetKcalGoalBreakdownUsecase>(
-      _FakeBreakdownUsecase(KcalGoalBreakdownEntity.compute(
-        user: UserEntityFixtures.youngSedentaryMaleWantingToMaintainWeight,
-        totalKcalActivities: 0,
-      )),
-    );
+    locator.registerSingleton<QuickLogRepository>(_FakeQuickLog());
   });
 
   tearDown(() {
@@ -64,18 +61,22 @@ void main() {
       await tester.binding.setSurfaceSize(const Size(500, 1600));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(_wrap(const DashboardWidget(
-        totalKcalSupplied: 800,
-        totalKcalBurned: 200,
-        totalKcalDaily: 2500,
-        totalKcalLeft: 1900,
-        totalCarbsIntake: 100,
-        totalFatsIntake: 30,
-        totalProteinsIntake: 60,
-        totalCarbsGoal: 375,
-        totalFatsGoal: 69,
-        totalProteinsGoal: 93,
-      )));
+      await tester.pumpWidget(
+        _wrap(
+          const DashboardWidget(
+            totalKcalSupplied: 800,
+            totalKcalBurned: 200,
+            totalKcalDaily: 2500,
+            totalKcalLeft: 1900,
+            totalCarbsIntake: 100,
+            totalFatsIntake: 30,
+            totalProteinsIntake: 60,
+            totalCarbsGoal: 375,
+            totalFatsGoal: 69,
+            totalProteinsGoal: 93,
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       final gaugeFinder = find.byWidgetPredicate(
@@ -89,7 +90,8 @@ void main() {
       expect(
         node.getSemanticsData().hasAction(SemanticsAction.tap),
         isTrue,
-        reason: 'excludeSemantics drops the GestureDetector\'s tap action, '
+        reason:
+            'excludeSemantics drops the GestureDetector\'s tap action, '
             'so the Semantics node must register its own onTap',
       );
 
@@ -98,7 +100,8 @@ void main() {
       node.owner!.performAction(node.id, SemanticsAction.tap);
       await tester.pumpAndSettle();
 
-      expect(find.byType(KcalGoalInfoScreen), findsOneWidget);
+      expect(find.byType(GoalsScreen), findsOneWidget);
+      expect(find.text('1700'), findsOneWidget);
 
       semanticsHandle.dispose();
     },

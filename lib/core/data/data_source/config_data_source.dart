@@ -61,6 +61,7 @@ class ConfigDataSource {
       merged.healthLastImportAt = profile.healthLastImportAt;
       merged.healthDeletedExternalIds = profile.healthDeletedExternalIds;
       merged.healthDeletedWorkouts = profile.healthDeletedWorkouts;
+      merged.devNutritionJson = profile.devNutritionJson;
     } else {
       // Explicitly clear personal fields so they don't leak from the
       // app box after a profile reset. A fresh profile therefore reads as
@@ -77,6 +78,7 @@ class ConfigDataSource {
       merged.healthLastImportAt = null;
       merged.healthDeletedExternalIds = null;
       merged.healthDeletedWorkouts = null;
+      merged.devNutritionJson = null;
     }
     return merged;
   }
@@ -139,6 +141,9 @@ class ConfigDataSource {
   Future<void> setConfigDisclaimer(bool hasAcceptedDisclaimer) async {
     await _update((c) => c.hasAcceptedDisclaimer = hasAcceptedDisclaimer);
   }
+
+  Future<void> setDevNutritionJson(String value) =>
+      _update((config) => config.devNutritionJson = value);
 
   Future<void> setConfigAcceptedAnonymousData(
     bool hasAcceptedAnonymousData,

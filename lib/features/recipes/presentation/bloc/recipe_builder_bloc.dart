@@ -11,25 +11,31 @@ import 'package:opennutritracker/features/add_meal/domain/entity/meal_nutriments
 part 'recipe_builder_event.dart';
 part 'recipe_builder_state.dart';
 
-class RecipeBuilderBloc
-    extends Bloc<RecipeBuilderEvent, RecipeBuilderState> {
+class RecipeBuilderBloc extends Bloc<RecipeBuilderEvent, RecipeBuilderState> {
   final ComputeRecipeNutritionUseCase _computeUseCase;
   final SaveRecipeUseCase _saveUseCase;
 
   RecipeBuilderBloc(this._computeUseCase, this._saveUseCase)
-      : super(RecipeBuilderState.initial()) {
+    : super(RecipeBuilderState.initial()) {
     on<InitializeBuilderEvent>(_onInitialize);
     on<UpdateNameEvent>(_onUpdateName);
     on<UpdateDescriptionEvent>(_onUpdateDescription);
     on<UpdateServingsCountEvent>(_onUpdateServings);
+    on<UpdateRecipePortionEvent>(
+      (event, emit) => emit(
+        state.copyWith(kind: event.kind, portionUnit: event.portionUnit),
+      ),
+    );
     on<UpdateTagsEvent>((event, emit) {
       emit(state.copyWith(tags: event.tags));
     });
     on<UpdateImagePathEvent>((event, emit) {
-      emit(state.copyWith(
-        imagePath: event.imagePath,
-        clearImagePath: event.imagePath == null,
-      ));
+      emit(
+        state.copyWith(
+          imagePath: event.imagePath,
+          clearImagePath: event.imagePath == null,
+        ),
+      );
     });
     on<AddIngredientEvent>(_onAddIngredient);
     on<UpdateIngredientEvent>(_onUpdateIngredient);
@@ -37,7 +43,6 @@ class RecipeBuilderBloc
     on<UpdateTotalWeightEvent>(_onUpdateTotalWeight);
     on<SaveRecipeEvent>(_onSave);
   }
-
 
   void _onInitialize(
     InitializeBuilderEvent event,
@@ -47,9 +52,9 @@ class RecipeBuilderBloc
       // Generate the recipe id eagerly so any photo the user attaches
       // before they hit save can be filed under the correct filename
       // (recipe_images/<id>.webp). The id is still kept on save below.
-      emit(RecipeBuilderState.initial().copyWith(
-        id: IdGenerator.getUniqueID(),
-      ));
+      emit(
+        RecipeBuilderState.initial().copyWith(id: IdGenerator.getUniqueID()),
+      );
     } else {
       final r = event.existing!;
       // Empty id is the sentinel used by the duplicate-recipe action: keep
@@ -58,7 +63,10 @@ class RecipeBuilderBloc
       final isDuplicate = r.id.isEmpty;
       emit(
         state.copyWith(
-          id: isDuplicate ? null : r.id,
+          id: isDuplicate ? IdGenerator.getUniqueID() : r.id,
+          kind: r.kind,
+          portionUnit: r.portionUnit,
+          createdAt: isDuplicate ? null : r.createdAt,
           name: r.name,
           description: r.description,
           servingsCount: r.servingsCount,
@@ -79,10 +87,7 @@ class RecipeBuilderBloc
     }
   }
 
-  void _onUpdateName(
-    UpdateNameEvent event,
-    Emitter<RecipeBuilderState> emit,
-  ) {
+  void _onUpdateName(UpdateNameEvent event, Emitter<RecipeBuilderState> emit) {
     emit(state.copyWith(name: event.name));
   }
 
@@ -109,21 +114,22 @@ class RecipeBuilderBloc
     AddIngredientEvent event,
     Emitter<RecipeBuilderState> emit,
   ) {
-    final convertedG = _computeUseCase.convertAmountToGrams(
+    final convertedG =
+        event.convertedAmountG ??
+        _computeUseCase.convertAmountToGrams(
           amount: event.amount,
           unit: event.unit,
           servingQuantityG: event.meal.servingQuantity,
         ) ??
         0;
+    if (!convertedG.isFinite || convertedG <= 0) return;
     final newIngredient = RecipeIngredientEntity(
       snapshotMeal: event.meal,
       amount: event.amount,
       unit: event.unit,
       convertedAmountG: convertedG,
     );
-    emit(
-      state.copyWith(ingredients: [...state.ingredients, newIngredient]),
-    );
+    emit(state.copyWith(ingredients: [...state.ingredients, newIngredient]));
     _recompute(emit);
   }
 
@@ -133,12 +139,15 @@ class RecipeBuilderBloc
   ) {
     if (event.index < 0 || event.index >= state.ingredients.length) return;
     final old = state.ingredients[event.index];
-    final convertedG = _computeUseCase.convertAmountToGrams(
+    final convertedG =
+        event.convertedAmountG ??
+        _computeUseCase.convertAmountToGrams(
           amount: event.amount,
           unit: event.unit,
           servingQuantityG: old.snapshotMeal.servingQuantity,
         ) ??
         0;
+    if (!convertedG.isFinite || convertedG <= 0) return;
     final updated = old.copyWith(
       amount: event.amount,
       unit: event.unit,
@@ -177,8 +186,9 @@ class RecipeBuilderBloc
   void _recompute(Emitter<RecipeBuilderState> emit) {
     final result = _computeUseCase.compute(
       state.ingredients,
-      totalWeightOverride:
-          state.totalWeightOverridden ? state.totalWeightG : null,
+      totalWeightOverride: state.totalWeightOverridden
+          ? state.totalWeightG
+          : null,
     );
     emit(
       state.copyWith(
@@ -218,11 +228,13 @@ class RecipeBuilderBloc
         ingredients: state.ingredients,
         totalWeightG: state.totalWeightG,
         aggregatedNutrimentsPer100: state.aggregatedNutrimentsPer100,
-        createdAt: state.isExistingRecipe ? now : now,
+        createdAt: state.createdAt ?? now,
         updatedAt: now,
         servingsCount: state.servingsCount,
         tags: state.tags,
         imagePath: state.imagePath,
+        kind: state.kind,
+        portionUnit: state.portionUnit,
       );
       await _saveUseCase.save(
         recipe,

@@ -5,7 +5,7 @@ import 'package:opennutritracker/core/styles/app_palette.dart';
 import 'package:opennutritracker/core/styles/dimens.dart';
 import 'package:opennutritracker/core/utils/calc/unit_calc.dart';
 import 'package:opennutritracker/core/utils/energy_unit_provider.dart';
-import 'package:opennutritracker/features/settings/presentation/widgets/kcal_goal_info_screen.dart';
+import 'package:opennutritracker/features/quick_log/presentation/goals_screen.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:opennutritracker/generated/l10n.dart';
 import 'package:provider/provider.dart';
@@ -41,12 +41,10 @@ class DashboardWidget extends StatefulWidget {
 }
 
 class _DashboardWidgetState extends State<DashboardWidget> {
-  void _openKcalGoalInfoScreen() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => const KcalGoalInfoScreen(),
-      ),
-    );
+  void _openGoalsScreen() {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const GoalsScreen()));
   }
 
   @override
@@ -70,26 +68,45 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     } else {
       kcalValue = widget.totalKcalLeft;
       gaugeValue =
-          (widget.totalKcalDaily - widget.totalKcalLeft) / widget.totalKcalDaily;
+          (widget.totalKcalDaily - widget.totalKcalLeft) /
+          widget.totalKcalDaily;
     }
-    final displayValue = usesKilojoules ? UnitCalc.kcalToKj(kcalValue) : kcalValue;
+    final displayValue = usesKilojoules
+        ? UnitCalc.kcalToKj(kcalValue)
+        : kcalValue;
     final displaySupplied = usesKilojoules
         ? UnitCalc.kcalToKj(widget.totalKcalSupplied)
         : widget.totalKcalSupplied;
     final displayBurned = usesKilojoules
         ? UnitCalc.kcalToKj(widget.totalKcalBurned)
         : widget.totalKcalBurned;
+    final displayGoal = usesKilojoules
+        ? UnitCalc.kcalToKj(widget.totalKcalDaily)
+        : widget.totalKcalDaily;
+    final goalLabelText =
+        '${S.of(context).goalLabel}: ${displayGoal.toInt()} '
+        '${usesKilojoules ? S.of(context).kjLabel : S.of(context).kcalLabel}';
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final palette = isDark ? AppPalette.dark : AppPalette.light;
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(Dimens.spacing16, Dimens.spacing8, Dimens.spacing16, Dimens.spacing4),
+      padding: const EdgeInsets.fromLTRB(
+        Dimens.spacing16,
+        Dimens.spacing8,
+        Dimens.spacing16,
+        Dimens.spacing4,
+      ),
       child: Column(
         children: [
           AppCard(
-            padding: const EdgeInsets.fromLTRB(Dimens.spacing24, Dimens.spacing20, Dimens.spacing24, Dimens.spacing24),
+            padding: const EdgeInsets.fromLTRB(
+              Dimens.spacing24,
+              Dimens.spacing20,
+              Dimens.spacing24,
+              Dimens.spacing24,
+            ),
             child: Column(
               children: [
                 Row(
@@ -120,23 +137,23 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 const SizedBox(height: Dimens.spacing16),
                 Semantics(
                   identifier: 'home-kcal-gauge',
-                  label: '${displayValue.toInt()} $kcalLabelText',
-                  hint: S.of(context).settingsKcalGoalInfoLabel,
+                  label:
+                      '${displayValue.toInt()} $kcalLabelText, $goalLabelText',
+                  hint: S.of(context).devGoals,
                   button: true,
                   excludeSemantics: true,
                   // excludeSemantics strips the GestureDetector's semantic
                   // tap action along with the rest of the subtree, so the
                   // node needs its own onTap for screen readers to be able
                   // to activate the button it announces.
-                  onTap: _openKcalGoalInfoScreen,
-                  // Tapping the gauge opens the calorie-goal transparency
-                  // screen, so the central number on the dashboard is one
-                  // tap away from its full derivation.
+                  onTap: _openGoalsScreen,
+                  // The food budget is an explicit personal goal. Tapping
+                  // it opens those goals instead of the upstream TDEE formula.
                   child: Tooltip(
-                    message: S.of(context).settingsKcalGoalInfoLabel,
+                    message: S.of(context).devGoals,
                     child: GestureDetector(
                       behavior: HitTestBehavior.opaque,
-                      onTap: _openKcalGoalInfoScreen,
+                      onTap: _openGoalsScreen,
                       child: CircularPercentIndicator(
                         radius: 90,
                         lineWidth: 16,
@@ -163,10 +180,26 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                               duration: const Duration(milliseconds: 800),
                               curve: AppMotion.emphasized,
                               value: displayValue.toInt(),
-                              textStyle: textTheme.displaySmall?.copyWith(height: 1),
+                              textStyle: textTheme.displaySmall?.copyWith(
+                                height: 1,
+                              ),
                             ),
                             const SizedBox(height: 2),
-                            Text(kcalLabelText, style: textTheme.bodyMedium?.copyWith(color: palette.textMuted)),
+                            Text(
+                              kcalLabelText,
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: palette.textMuted,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              goalLabelText,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: textTheme.labelSmall?.copyWith(
+                                color: palette.textMuted,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -235,18 +268,31 @@ class _MiniStat extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Column(
-      crossAxisAlignment: trailing ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: trailing
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
         Container(
           padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(color: color.withValues(alpha: 0.16), shape: BoxShape.circle),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.16),
+            shape: BoxShape.circle,
+          ),
           child: Icon(icon, color: color, size: 20),
         ),
         const SizedBox(height: 6),
-        Text(value,
-            maxLines: 1, overflow: TextOverflow.ellipsis, style: textTheme.titleMedium),
-        Text(label,
-            maxLines: 1, overflow: TextOverflow.ellipsis, style: textTheme.labelSmall),
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: textTheme.titleMedium,
+        ),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: textTheme.labelSmall,
+        ),
       ],
     );
   }
@@ -273,13 +319,22 @@ class _MacroTile extends StatelessWidget {
     final pct = (goal <= 0) ? 0.0 : (intake / goal).clamp(0.0, 1.0);
     return AppCard(
       borderRadius: Dimens.radiusM,
-      padding: const EdgeInsets.fromLTRB(Dimens.spacing16, Dimens.spacing16, Dimens.spacing16, Dimens.spacing16),
+      padding: const EdgeInsets.fromLTRB(
+        Dimens.spacing16,
+        Dimens.spacing16,
+        Dimens.spacing16,
+        Dimens.spacing16,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(width: 9, height: 9, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+              Container(
+                width: 9,
+                height: 9,
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              ),
               const SizedBox(width: 6),
               Flexible(child: Text(label, style: textTheme.labelMedium)),
             ],
@@ -297,7 +352,10 @@ class _MacroTile extends StatelessWidget {
           const SizedBox(height: Dimens.spacing12),
           Text(
             '${intake.toInt()}/${goal.toInt()} g',
-            style: textTheme.bodySmall?.copyWith(color: palette.textStrong, fontWeight: FontWeight.w700),
+            style: textTheme.bodySmall?.copyWith(
+              color: palette.textStrong,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),

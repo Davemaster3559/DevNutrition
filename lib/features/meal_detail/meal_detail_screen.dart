@@ -25,6 +25,7 @@ import 'package:opennutritracker/features/meal_detail/presentation/widgets/meal_
 import 'package:opennutritracker/features/meal_detail/presentation/widgets/meal_title_expanded.dart';
 import 'package:opennutritracker/features/meal_detail/presentation/widgets/off_disclaimer.dart';
 import 'package:opennutritracker/generated/l10n.dart';
+import 'package:opennutritracker/features/quick_log/data/quick_log_repository.dart';
 
 class MealDetailScreen extends StatefulWidget {
   const MealDetailScreen({super.key});
@@ -260,7 +261,10 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
       child: SafeArea(
         child: Scaffold(
           backgroundColor:
-              (Theme.of(context).brightness == Brightness.dark ? AppPalette.dark : AppPalette.light).canvas,
+              (Theme.of(context).brightness == Brightness.dark
+                      ? AppPalette.dark
+                      : AppPalette.light)
+                  .canvas,
           body: BlocBuilder<MealDetailBloc, MealDetailState>(
             bloc: _mealDetailBloc,
             builder: (context, state) {
@@ -281,20 +285,20 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
               return const Center(child: CircularProgressIndicator());
             },
           ),
-        bottomSheet: BlocSelector<MealDetailBloc, MealDetailState, String>(
-          bloc: _mealDetailBloc,
-          selector: (state) => state.selectedUnit,
-          builder: (context, selectedUnit) {
-            return MealDetailBottomSheet(
-              product: meal,
-              day: _day,
-              intakeTypeEntity: intakeTypeEntity,
-              selectedUnit: selectedUnit,
-              mealDetailBloc: _mealDetailBloc,
-              quantityTextController: quantityTextController,
-              onQuantityOrUnitChanged: onQuantityOrUnitChanged,
-            );
-          },
+          bottomSheet: BlocSelector<MealDetailBloc, MealDetailState, String>(
+            bloc: _mealDetailBloc,
+            selector: (state) => state.selectedUnit,
+            builder: (context, selectedUnit) {
+              return MealDetailBottomSheet(
+                product: meal,
+                day: _day,
+                intakeTypeEntity: intakeTypeEntity,
+                selectedUnit: selectedUnit,
+                mealDetailBloc: _mealDetailBloc,
+                quantityTextController: quantityTextController,
+                onQuantityOrUnitChanged: onQuantityOrUnitChanged,
+              );
+            },
           ),
         ),
       ),
@@ -333,10 +337,9 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
             duration: const Duration(milliseconds: 200),
             child: Text(
               meal.name ?? '',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontWeight: FontWeight.w800),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -350,9 +353,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
           ),
           flexibleSpace: FlexibleSpaceBar(
             background: Padding(
-              padding: EdgeInsets.only(
-                bottom: dayKcalGoal > 0 ? 68 : 0,
-              ),
+              padding: EdgeInsets.only(bottom: dayKcalGoal > 0 ? 68 : 0),
               child: MealTitleExpanded(
                 meal: meal,
                 usesImperialUnits: _usesImperialUnits,
@@ -360,6 +361,23 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
             ),
           ),
           actions: [
+            Semantics(
+              identifier: 'meal-detail-pin',
+              child: IconButton(
+                tooltip: S.of(context).devPin,
+                icon: const Icon(Icons.push_pin_outlined),
+                onPressed: () async {
+                  final repository = locator<QuickLogRepository>();
+                  await repository.saveFood(meal);
+                  await repository.pin(meal.code ?? meal.name ?? '');
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(S.of(context).devPin)),
+                    );
+                  }
+                },
+              ),
+            ),
             Semantics(
               identifier: 'meal-detail-edit',
               child: IconButton(
@@ -419,9 +437,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                     children: [
                       Text(
                         EnergyDisplay.formatWithUnit(context, totalKcal),
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
+                        style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(fontWeight: FontWeight.w800),
                       ),
                       MealValueUnitText(
@@ -429,8 +445,8 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                         meal: meal,
                         displayUnit:
                             selectedUnit == UnitDropdownItem.serving.toString()
-                                ? meal.servingUnit
-                                : selectedUnit,
+                            ? meal.servingUnit
+                            : selectedUnit,
                         usesImperialUnits: _usesImperialUnits,
                         textStyle: Theme.of(context).textTheme.bodyMedium,
                         prefix: ' / ',
@@ -443,17 +459,21 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                     children: [
                       MealDetailMacroNutrients(
                         typeString: S.of(context).carbsLabel,
-                        value: totalCarbs,
+                        value: meal.nutriments.carbohydrates100 == null
+                            ? null
+                            : totalCarbs,
                         color: palette.carbs,
                       ),
                       MealDetailMacroNutrients(
                         typeString: S.of(context).fatLabel,
-                        value: totalFat,
+                        value: meal.nutriments.fat100 == null ? null : totalFat,
                         color: palette.fat,
                       ),
                       MealDetailMacroNutrients(
                         typeString: S.of(context).proteinLabel,
-                        value: totalProtein,
+                        value: meal.nutriments.proteins100 == null
+                            ? null
+                            : totalProtein,
                         color: palette.protein,
                       ),
                     ],
@@ -540,4 +560,3 @@ class MealDetailScreenArguments {
     this.usesImperialUnits,
   );
 }
-

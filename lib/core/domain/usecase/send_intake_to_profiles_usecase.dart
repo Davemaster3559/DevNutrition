@@ -108,6 +108,8 @@ class SendIntakeToProfilesUsecase {
           amount: intake.amount,
           type: intake.type,
           meal: intake.meal,
+          displayUnit: intake.displayUnit,
+          baseAmountPerDisplayUnit: intake.baseAmountPerDisplayUnit,
           dateTime: intake.dateTime,
         );
         await intakeRepository.addIntake(copy);

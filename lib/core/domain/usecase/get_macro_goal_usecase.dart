@@ -1,5 +1,6 @@
 import 'package:opennutritracker/core/data/repository/config_repository.dart';
 import 'package:opennutritracker/core/utils/calc/macro_calc.dart';
+import 'package:opennutritracker/features/quick_log/domain/devnutrition_preferences.dart';
 
 class GetMacroGoalUsecase {
   final ConfigRepository _configRepository;
@@ -9,6 +10,9 @@ class GetMacroGoalUsecase {
   Future<double> getCarbsGoal(double totalCalorieGoal) async {
     final config = await _configRepository.getConfig();
     final userCarbGoal = config.userCarbGoalPct;
+    if (config.devNutritionJson != null) {
+      return DevNutritionPreferences.decode(config.devNutritionJson).carbGoal;
+    }
 
     return MacroCalc.getTotalCarbsGoal(
       totalCalorieGoal,
@@ -19,6 +23,9 @@ class GetMacroGoalUsecase {
   Future<double> getFatsGoal(double totalCalorieGoal) async {
     final config = await _configRepository.getConfig();
     final userFatGoal = config.userFatGoalPct;
+    if (config.devNutritionJson != null) {
+      return DevNutritionPreferences.decode(config.devNutritionJson).fatGoal;
+    }
 
     return MacroCalc.getTotalFatsGoal(
       totalCalorieGoal,
@@ -29,6 +36,11 @@ class GetMacroGoalUsecase {
   Future<double> getProteinsGoal(double totalCalorieGoal) async {
     final config = await _configRepository.getConfig();
     final userProteinGoal = config.userProteinGoalPct;
+    if (config.devNutritionJson != null) {
+      return DevNutritionPreferences.decode(
+        config.devNutritionJson,
+      ).proteinGoal;
+    }
 
     return MacroCalc.getTotalProteinsGoal(
       totalCalorieGoal,

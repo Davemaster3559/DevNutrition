@@ -25,8 +25,8 @@ class _EditDialogState extends State<EditDialog> {
   void initState() {
     super.initState();
     double initialAmount = _convertValue(
-      widget.intakeEntity.amount,
-      widget.intakeEntity.meal.mealUnit,
+      widget.intakeEntity.displayedAmount,
+      widget.intakeEntity.displayUnit ?? widget.intakeEntity.meal.mealUnit,
     );
     amountEditingController = TextEditingController(
       text: initialAmount.toStringAsFixed(2),
@@ -46,7 +46,11 @@ class _EditDialogState extends State<EditDialog> {
             inputFormatters: CustomTextInputFormatter.doubleOnly(),
             decoration: InputDecoration(
               labelText: S.of(context).quantityLabel,
-              suffixText: _convertUnit(widget.intakeEntity.meal.mealUnit ?? ''),
+              suffixText: _convertUnit(
+                widget.intakeEntity.displayUnit ??
+                    widget.intakeEntity.meal.mealUnit ??
+                    '',
+              ),
             ),
           ),
         ],
@@ -57,12 +61,16 @@ class _EditDialogState extends State<EditDialog> {
             final newAmount = double.tryParse(
               amountEditingController.text.replaceAll(',', '.'),
             );
-            if (newAmount == null) return;
+            if (newAmount == null || !newAmount.isFinite || newAmount <= 0) {
+              return;
+            }
             Navigator.of(context).pop(
               _convertBackToMetricValue(
-                newAmount,
-                widget.intakeEntity.meal.mealUnit,
-              ),
+                    newAmount,
+                    widget.intakeEntity.displayUnit ??
+                        widget.intakeEntity.meal.mealUnit,
+                  ) *
+                  (widget.intakeEntity.baseAmountPerDisplayUnit ?? 1),
             );
           },
           child: Text(S.of(context).dialogOKLabel),

@@ -15,6 +15,7 @@ import 'package:opennutritracker/core/utils/calc/calorie_goal_calc.dart';
 import 'package:opennutritracker/core/utils/calc/macro_calc.dart';
 import 'package:opennutritracker/core/utils/url_const.dart';
 import 'package:opennutritracker/features/onboarding/domain/entity/user_data_mask_entity.dart';
+import 'package:opennutritracker/features/quick_log/domain/devnutrition_preferences.dart';
 
 part 'onboarding_event.dart';
 
@@ -28,12 +29,14 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   final AddUserUsecase _addUserUsecase;
   final AddConfigUsecase _addConfigUsecase;
   final GetConfigUsecase _getConfigUsecase;
+  final DevNutritionPreferences? personalGoals;
 
   OnboardingBloc(
     this._addUserUsecase,
     this._addConfigUsecase,
-    this._getConfigUsecase,
-  ) : super(OnboardingInitialState()) {
+    this._getConfigUsecase, {
+    this.personalGoals,
+  }) : super(OnboardingInitialState()) {
     on<LoadOnboardingEvent>((event, emit) async {
       emit(OnboardingLoadingState());
       await _seedUnitSelection();
@@ -106,6 +109,9 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     required bool useMaterialYou,
     required int? accentColor,
   }) async {
+    if (personalGoals != null) {
+      userEntity.targetWeightKg ??= personalGoals!.goalWeightKg;
+    }
     await _addUserUsecase.addUser(userEntity);
     // Privacy policy is required to leave the intro page, so completing
     // onboarding always means the user accepted it. Persist that – the flag
@@ -148,6 +154,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   }
 
   double? getOverviewCalorieGoal() {
+    if (personalGoals != null) return personalGoals!.calorieGoal;
     final userEntity = userSelection.toUserEntity();
     double? calorieGoal;
     if (userEntity != null) {
@@ -157,6 +164,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   }
 
   double? getOverviewCarbsGoal() {
+    if (personalGoals != null) return personalGoals!.carbGoal;
     final userEntity = userSelection.toUserEntity();
     final calorieGoal = getOverviewCalorieGoal();
     double? carbsGoal;
@@ -167,6 +175,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   }
 
   double? getOverviewFatGoal() {
+    if (personalGoals != null) return personalGoals!.fatGoal;
     final userEntity = userSelection.toUserEntity();
     final calorieGoal = getOverviewCalorieGoal();
     double? fatGoal;
@@ -177,6 +186,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   }
 
   double? getOverviewProteinGoal() {
+    if (personalGoals != null) return personalGoals!.proteinGoal;
     final userEntity = userSelection.toUserEntity();
     final calorieGoal = getOverviewCalorieGoal();
     double? proteinGoal;
@@ -194,6 +204,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   /// transparency screen uses, so the number explained here is the number
   /// the app shows afterwards.
   KcalGoalBreakdownEntity? getOverviewBreakdown() {
+    if (personalGoals != null) return null;
     final userEntity = userSelection.toUserEntity();
     if (userEntity == null) return null;
     return KcalGoalBreakdownEntity.compute(

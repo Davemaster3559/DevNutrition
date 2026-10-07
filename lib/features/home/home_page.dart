@@ -1,3 +1,4 @@
+import 'package:opennutritracker/features/quick_log/presentation/quick_log_screen.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -199,6 +200,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 ],
               ),
             ),
+            Semantics(
+              identifier: 'home-quick-log',
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: FilledButton.icon(
+                  icon: const Icon(Icons.bolt),
+                  label: Text(S.of(context).devHomeQuick),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const QuickLogScreen()),
+                  ),
+                ),
+              ),
+            ),
             const FastingHomeChip(),
             const SizedBox(height: Dimens.spacing8),
             DashboardWidget(
@@ -213,6 +227,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               totalFatsGoal: totalFatsGoal,
               totalProteinsGoal: totalProteinsGoal,
             ),
+            if ([
+              ...breakfastIntakeList,
+              ...lunchIntakeList,
+              ...dinnerIntakeList,
+              ...snackIntakeList,
+            ].any(
+              (i) =>
+                  i.meal.nutriments.energyKcal100 == null ||
+                  i.meal.nutriments.proteins100 == null ||
+                  i.meal.nutriments.carbohydrates100 == null ||
+                  i.meal.nutriments.fat100 == null,
+            ))
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 8,
+                ),
+                child: Text(S.of(context).devNutritionPartial),
+              ),
             // Day-one / empty-day guidance: when nothing is logged yet, point
             // the way to the centre + rather than leaving a silent dashboard.
             if (breakfastIntakeList.isEmpty &&

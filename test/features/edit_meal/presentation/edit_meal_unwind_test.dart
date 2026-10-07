@@ -3,6 +3,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:opennutritracker/core/data/data_source/custom_meal_data_source.dart';
+import 'package:opennutritracker/core/data/dbo/meal_dbo.dart';
 import 'package:opennutritracker/core/data/data_source/remote_search_cache_data_source.dart';
 import 'package:opennutritracker/core/data/repository/config_repository.dart';
 import 'package:opennutritracker/core/domain/entity/app_theme_entity.dart';
@@ -233,6 +234,9 @@ class _FakeConfigRepository implements ConfigRepository {
 }
 
 class _FakeCustomMealDataSource implements CustomMealDataSource {
+  @override
+  Future<void> saveCustomMeal(MealDBO meal) async {}
+
   @override
   dynamic noSuchMethod(Invocation invocation) =>
       throw UnimplementedError('Unexpected call: ${invocation.memberName}');

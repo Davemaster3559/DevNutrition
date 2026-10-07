@@ -1,0 +1,104 @@
+DevNutrition verification — 2026-10-07
+
+Base: OpenNutriTracker v2.4.0, commit
+8d2420f0305c96a4f798f3a111509827260f6df7.
+Flutter 3.44.6 / Dart 3.12.2, JDK 21, Android SDK 36.
+Android testing: Pixel 6 emulator, API 36, x86_64.
+Release: com.devnutrition.app, version 1.0.0 (1), min SDK 26 / target 36.
+APK includes arm64-v8a, armeabi-v7a and x86_64 native code.
+
+FINAL SUCCESSFUL CHECKS
+
+dart run build_runner build --delete-conflicting-outputs
+  PASS. Hive/JSON/Env code generation completed; 44 generated outputs.
+flutter gen-l10n
+  PASS. English additions and generated localization output validated.
+flutter analyze
+  PASS. No issues found (final run: 23.2 seconds).
+flutter test --reporter expanded
+  PASS. 2,597 tests passed, no failures (final run: 1 minute 6 seconds).
+flutter test integration_test/app_boot_test.dart --flavor develop
+  -d emulator-5554 --reporter expanded --timeout 20m
+  PASS. Android daily-workflow integration test (1 minute 31 seconds).
+flutter build apk --release --flavor full
+  PASS. Final build completed in 53.5 seconds; reported APK size 100.3 MB.
+apksigner verify --verbose --print-certs app-full-release.apk
+  PASS. Valid APK Signature Scheme v2 signature, one private release signer.
+aapt dump badging app-full-release.apk
+  PASS. DevNutrition identity, SDK levels and three ABIs confirmed.
+
+ANDROID WORKFLOWS EXERCISED
+
+The integration test uses the real application and encrypted Android storage:
+onboarding; editable calorie/protein goals; Banana Whey Shake, Overnight Oats,
+Fruit Bowl A and Fruit Bowl B; raw atta cup calibration and roti logging;
+raw rice and one-third-batch logging; local reference-food search/logging;
+custom label creation/editing; recipe creation from ingredients; 1.25 katori
+logging and saved usual serving; recipe-yield edits preserving old diary
+nutrition; repeated logging; diary amount edits and deletion; weight logging
+and the Trends screen. It completed without Flutter errors.
+
+The signed release APK was also installed and exercised independently of
+Flutter's integration-test runner:
+- Fresh onboarding confirmed 1,700 kcal and 120 g protein defaults.
+- Goals were edited to 1,800 kcal and 125 g protein in the synthetic test profile.
+- Android camera permission and scanner manual-entry UI were exercised.
+  Barcode 3017620422003 returned Nutella from live Open Food Facts; 30 g logged.
+- Airplane mode was enabled and Wi-Fi disabled. A roti batch used 0.75 cups
+  with 123 g/cup, six rotis produced and two eaten. The named recipe was saved.
+- Cold restart retained goals, the diary, named recipe, scanned food and
+  123 g/cup calibration. One-tap saved whey-and-water logging worked offline.
+- The final APK was installed as an update with the same signing key.
+  Another offline cold start retained all data and displayed the explicit
+  1,800 kcal target. Tapping the gauge opened My goals with 1,800 / 125 and
+  exercise adjustment OFF. Stored nutrition trends opened offline.
+- Startup also worked with crash-report consent selected and no configured
+  reporting endpoint. A backup restore never enables that consent.
+- Android's native document picker saved a JSON ZIP backup. The ZIP was
+  imported twice through the native picker and exported again. Direct JSON
+  comparison confirmed three identical diary entries, 13 identical recipes,
+  unchanged custom food, goals, pins, calibration, product choices and usual
+  servings. No lost or duplicated records. Emulator connectivity was restored.
+
+NUTRITION AND PERSISTENCE REGRESSIONS COVERED
+
+Focused tests protect quantity scaling, food-specific household conversions,
+123 g atta / 180 g rice calibration, actual oil per batch or roti, fractional
+rice, all 12 seeded presets, 1.25 scoops of whey (183.75 kcal / 31.25 g protein),
+unknown nutrient preservation, exact-label overrides and micronutrient edits,
+historical recipe snapshots, shift-day boundaries, moving/deleting entries,
+and reconciled daily totals. A 350 kcal activity leaves a 1,700 kcal food goal
+unchanged unless the explicit opt-in is enabled; protein remains independent.
+
+Real AES-encrypted Hive tests close/reopen storage and round-trip the actual
+JSON ZIP format, including recipes, custom foods, goals, measures, pins,
+usual servings, weights, water, fasting and activity templates. Repeated
+imports merge by stable IDs; a different local water record at Hive key 0
+survives. Unsupported extension versions and malformed later JSON datasets
+are rejected before diary writes. Existing upstream tests are included in
+the complete passing suite.
+
+DATA AND ARTIFACTS
+
+The bundled catalogue contains 919 reference foods and 12 ingredient-based
+presets. USDA source IDs were checked against their original descriptions.
+INDB/USDA licensing and transformations are in ATTRIBUTION.txt and the app's
+license view. Manufacturer/reference substitutes are explicitly marked;
+check the user's actual whey, yogurt, tofu, milk and soya labels for exact
+product values. Missing nutrient data remain null, displayed as a dash.
+
+The delivery includes the signed APK, corresponding source ZIP, setup/use
+instructions, this report, attribution, SHA-256 hashes and screenshots in
+evidence/. The working repository contains the source tests and changes.
+The source archive excludes SDKs, caches, build products, .env, generated
+private environment values and signing keys. The separate private-signing/
+folder must be retained privately for future signed updates.
+
+PHYSICAL-DEVICE LIMITS
+
+Physical barcode-camera decoding/performance needs a phone; the emulator
+verified camera permission, manual barcode lookup and product logging.
+Real DevFit / Health Connect record transfer requires a compatible installed
+app, actual records and Android permissions on a phone. Existing optional
+Health Connect integration and its logic tests are retained. No external
+account or credential is required for the completed personal/offline app.

@@ -24,6 +24,11 @@ class IntakeDBO extends HiveObject {
   @HiveField(5)
   DateTime dateTime;
 
+  @HiveField(6)
+  String? displayUnit;
+  @HiveField(7)
+  double? baseAmountPerDisplayUnit;
+
   IntakeDBO({
     required this.id,
     required this.unit,
@@ -31,6 +36,8 @@ class IntakeDBO extends HiveObject {
     required this.type,
     required this.meal,
     required this.dateTime,
+    this.displayUnit,
+    this.baseAmountPerDisplayUnit,
   });
 
   factory IntakeDBO.fromIntakeEntity(IntakeEntity entity) {
@@ -41,6 +48,8 @@ class IntakeDBO extends HiveObject {
       type: IntakeTypeDBO.fromIntakeTypeEntity(entity.type),
       meal: MealDBO.fromMealEntity(entity.meal),
       dateTime: entity.dateTime,
+      displayUnit: entity.displayUnit,
+      baseAmountPerDisplayUnit: entity.baseAmountPerDisplayUnit,
     );
   }
 

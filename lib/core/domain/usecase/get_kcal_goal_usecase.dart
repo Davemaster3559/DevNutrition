@@ -5,6 +5,7 @@ import 'package:opennutritracker/core/data/repository/user_repository.dart';
 import 'package:opennutritracker/core/domain/entity/user_entity.dart';
 import 'package:opennutritracker/core/utils/calc/calorie_goal_calc.dart';
 import 'package:opennutritracker/core/utils/calc/day_boundary_calc.dart';
+import 'package:opennutritracker/features/quick_log/domain/devnutrition_preferences.dart';
 
 class GetKcalGoalUsecase {
   final UserRepository _userRepository;
@@ -21,9 +22,16 @@ class GetKcalGoalUsecase {
     UserEntity? userEntity,
     double? totalKcalActivitiesParam,
     double? kcalUserAdjustment,
+    DateTime? day,
   }) async {
     final user = userEntity ?? await _userRepository.getUserData();
     final config = await _configRepository.getConfig();
+    if (config.devNutritionJson != null) {
+      final preferences = DevNutritionPreferences.decode(
+        config.devNutritionJson,
+      );
+      if (!preferences.eatBackExercise) return preferences.calorieGoal;
+    }
     final totalKcalActivities =
         totalKcalActivitiesParam ??
         (await _userActivityRepository.getAllUserActivityByDate(
@@ -33,13 +41,20 @@ class GetKcalGoalUsecase {
           // and the boundary is a different day than the one Home's
           // activity list shows — the goal would silently drop those
           // burned calories.
-          DayBoundaryCalc.currentLogicalDayLabel(
-            config.dayStartOffsetHours,
-            config.dayStartOffsetMinutes,
-          ),
+          day ??
+              DayBoundaryCalc.currentLogicalDayLabel(
+                config.dayStartOffsetHours,
+                config.dayStartOffsetMinutes,
+              ),
           dayStartOffsetHours: config.dayStartOffsetHours,
           dayStartOffsetMinutes: config.dayStartOffsetMinutes,
         )).map((activity) => activity.burnedKcal).toList().sum;
+    if (config.devNutritionJson != null) {
+      return DevNutritionPreferences.decode(
+            config.devNutritionJson,
+          ).calorieGoal +
+          totalKcalActivities;
+    }
     return CalorieGoalCalc.getTotalKcalGoal(
       user,
       totalKcalActivities,

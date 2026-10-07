@@ -121,10 +121,7 @@ class _MealDetailBottomSheetState extends State<MealDetailBottomSheet> {
         // the row entirely when nothing applies (no orphan SizedBox).
         final quickOptions = productMissingRequiredInfo
             ? const <QuickServingOption>[]
-            : quickServingOptionsFor(
-                widget.product,
-                S.of(context).gramUnit,
-              );
+            : quickServingOptionsFor(widget.product, S.of(context).gramUnit);
         return Container(
           decoration: BoxDecoration(
             border: Border(
@@ -209,9 +206,7 @@ class _MealDetailBottomSheetState extends State<MealDetailBottomSheet> {
                       ),
                       if (quickOptions.isNotEmpty)
                         Padding(
-                          padding: const EdgeInsets.only(
-                            top: Dimens.spacing12,
-                          ),
+                          padding: const EdgeInsets.only(top: Dimens.spacing12),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Wrap(
@@ -219,8 +214,7 @@ class _MealDetailBottomSheetState extends State<MealDetailBottomSheet> {
                               children: [
                                 for (final option in quickOptions)
                                   Semantics(
-                                    identifier:
-                                        'meal-detail-chip-${option.id}',
+                                    identifier: 'meal-detail-chip-${option.id}',
                                     child: ActionChip(
                                       label: Text(option.label),
                                       onPressed: () =>
@@ -277,10 +271,7 @@ class _MealDetailBottomSheetState extends State<MealDetailBottomSheet> {
 
   bool _hasRequiredProductInfoMissing() {
     final productNutriments = widget.product.nutriments;
-    if (productNutriments.energyKcal100 == null ||
-        productNutriments.carbohydrates100 == null ||
-        productNutriments.fat100 == null ||
-        productNutriments.proteins100 == null) {
+    if (productNutriments.energyKcal100 == null) {
       return true;
     } else {
       return false;

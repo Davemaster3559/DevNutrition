@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logging/logging.dart';
 import 'package:opennutritracker/core/data/data_source/remote_search_cache_data_source.dart';
@@ -59,6 +60,11 @@ final _appLocales = appLocales(S.supportedLocales);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  LicenseRegistry.addLicense(() async* {
+    yield LicenseEntryWithLineBreaks(const [
+      'DevNutrition / nutrition reference data',
+    ], await rootBundle.loadString('assets/data/ATTRIBUTION.txt'));
+  });
   LoggerConfig.intiLogger();
   await _bootstrapApp();
 }
@@ -136,7 +142,16 @@ Future<void> _bootstrapApp() async {
 
   // If the user has accepted anonymous data collection, run the app with
   // sentry enabled, else run without it
-  if (kReleaseMode && hasAcceptedAnonymousData) {
+  // A standalone personal build has no reporting endpoint. Opting in must
+  // still allow startup when .env contains the documented placeholders.
+  final sentryUri = Uri.tryParse(Env.sentryDns);
+  final sentryConfigured =
+      sentryUri != null &&
+      sentryUri.scheme == 'https' &&
+      sentryUri.host.isNotEmpty &&
+      sentryUri.userInfo.isNotEmpty &&
+      sentryUri.pathSegments.isNotEmpty;
+  if (kReleaseMode && hasAcceptedAnonymousData && sentryConfigured) {
     log.info('Starting App with Sentry enabled ...');
     _runAppWithSentryReporting(
       isUserInitialized,
@@ -312,7 +327,8 @@ class _OpenNutriTrackerAppState extends State<OpenNutriTrackerApp>
         NavigationOptions.settingsRoute: (context) => const SettingsScreen(),
         NavigationOptions.accentColourRoute: (context) =>
             const AccentColourScreen(),
-        NavigationOptions.healthSyncRoute: (context) => const HealthSyncScreen(),
+        NavigationOptions.healthSyncRoute: (context) =>
+            const HealthSyncScreen(),
         NavigationOptions.addMealRoute: (context) => const AddMealScreen(),
         NavigationOptions.bulkAddRoute: (context) => const BulkAddScreen(),
         NavigationOptions.scannerRoute: (context) => const ScannerScreen(),

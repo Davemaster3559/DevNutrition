@@ -1,3 +1,16 @@
+# DevNutrition
+
+Android nutrition tracker based on OpenNutriTracker v2.4.0, with quick logging,
+Indian food references, reusable meals, raw atta/roti and dry-rice portions,
+recipe estimates, and editable calorie and protein goals.
+
+See [DevNutrition setup and usage](README_DEVNUTRITION.md),
+[test results](TEST_RESULTS.txt), and [food data attribution](assets/data/ATTRIBUTION.txt).
+The Android application id is `com.devnutrition.app`. Source is licensed under
+GPLv3; signing keys and local configuration are excluded from this repository.
+
+## Upstream OpenNutriTracker documentation
+
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/icon/ont_banner_top_light.png">

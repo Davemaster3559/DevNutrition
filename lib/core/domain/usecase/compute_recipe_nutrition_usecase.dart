@@ -63,11 +63,9 @@ class ComputeRecipeNutritionUseCase {
       );
     }
 
-    final totalWeightG = totalWeightOverride ??
-        ingredients.fold<double>(
-          0,
-          (sum, i) => sum + i.convertedAmountG,
-        );
+    final totalWeightG =
+        totalWeightOverride ??
+        ingredients.fold<double>(0, (sum, i) => sum + i.convertedAmountG);
 
     if (totalWeightG <= 0) {
       return ComputeRecipeNutritionResult(
@@ -77,17 +75,15 @@ class ComputeRecipeNutritionUseCase {
     }
 
     // For every nutrient field: sum (value100 ?? 0) × convertedAmountG / 100
-    // across ingredients, but track whether *any* ingredient had a non-null
-    // value for that field. If none did, the recipe field stays null too —
+    // across ingredients, but track whether *every* ingredient had a non-null
+    // value for that field. If any did not, the recipe field stays null too —
     // that preserves the existing UI behaviour of hiding unknown micros.
-    //
-    // The previous shape called a per-nutrient helper 24 times, each doing
-    // its own anyNonNull() + total() pass. Restructuring to a single sweep
-    // over the ingredient list keeps the same null-stays-null semantics
-    // while collapsing 48 traversals into 1.
     final acc = _NutrientAccumulator();
     for (final ingredient in ingredients) {
-      acc.addFrom(ingredient.snapshotMeal.nutriments, ingredient.convertedAmountG);
+      acc.addFrom(
+        ingredient.snapshotMeal.nutriments,
+        ingredient.convertedAmountG,
+      );
     }
 
     final per = acc.toEntityPerHundredG(totalWeightG);
@@ -101,10 +97,8 @@ class ComputeRecipeNutritionUseCase {
 
 /// Single-pass accumulator for the 24 nutrient fields tracked on
 /// [MealNutrimentsEntity]. Each field has a running sum and a flag for
-/// "did any ingredient ever carry a non-null value for this field?". The
-/// flag drives the existing "hide unknown micros" UI behaviour: if every
-/// ingredient was silent on, say, vitamin B6, the recipe stays silent
-/// too rather than showing a misleading 0.
+/// "did every ingredient carry a value for this field?". A missing value
+/// leaves the complete recipe nutrient unknown instead of understating it.
 class _NutrientAccumulator {
   double _energyKcal = 0, _carbs = 0, _fat = 0, _protein = 0;
   double _sugars = 0, _satFat = 0, _fiber = 0;
@@ -113,93 +107,99 @@ class _NutrientAccumulator {
   double _iron = 0, _zinc = 0, _phosphorus = 0;
   double _vitA = 0, _vitC = 0, _vitD = 0, _vitB6 = 0, _vitB12 = 0, _niacin = 0;
 
-  bool _hasEnergy = false, _hasCarbs = false, _hasFat = false, _hasProtein = false;
-  bool _hasSugars = false, _hasSatFat = false, _hasFiber = false;
-  bool _hasMonoFat = false, _hasPolyFat = false, _hasTransFat = false, _hasCholesterol = false;
-  bool _hasSodium = false, _hasPotassium = false, _hasMagnesium = false, _hasCalcium = false;
-  bool _hasIron = false, _hasZinc = false, _hasPhosphorus = false;
-  bool _hasVitA = false, _hasVitC = false, _hasVitD = false;
-  bool _hasVitB6 = false, _hasVitB12 = false, _hasNiacin = false;
+  bool _hasEnergy = true, _hasCarbs = true, _hasFat = true, _hasProtein = true;
+  bool _hasSugars = true, _hasSatFat = true, _hasFiber = true;
+  bool _hasMonoFat = true,
+      _hasPolyFat = true,
+      _hasTransFat = true,
+      _hasCholesterol = true;
+  bool _hasSodium = true,
+      _hasPotassium = true,
+      _hasMagnesium = true,
+      _hasCalcium = true;
+  bool _hasIron = true, _hasZinc = true, _hasPhosphorus = true;
+  bool _hasVitA = true, _hasVitC = true, _hasVitD = true;
+  bool _hasVitB6 = true, _hasVitB12 = true, _hasNiacin = true;
 
   void addFrom(MealNutrimentsEntity n, double convertedAmountG) {
     final ratio = convertedAmountG / 100;
 
-    if (n.energyKcal100 != null) _hasEnergy = true;
+    if (n.energyKcal100 == null) _hasEnergy = false;
     _energyKcal += (n.energyKcal100 ?? 0) * ratio;
 
-    if (n.carbohydrates100 != null) _hasCarbs = true;
+    if (n.carbohydrates100 == null) _hasCarbs = false;
     _carbs += (n.carbohydrates100 ?? 0) * ratio;
 
-    if (n.fat100 != null) _hasFat = true;
+    if (n.fat100 == null) _hasFat = false;
     _fat += (n.fat100 ?? 0) * ratio;
 
-    if (n.proteins100 != null) _hasProtein = true;
+    if (n.proteins100 == null) _hasProtein = false;
     _protein += (n.proteins100 ?? 0) * ratio;
 
-    if (n.sugars100 != null) _hasSugars = true;
+    if (n.sugars100 == null) _hasSugars = false;
     _sugars += (n.sugars100 ?? 0) * ratio;
 
-    if (n.saturatedFat100 != null) _hasSatFat = true;
+    if (n.saturatedFat100 == null) _hasSatFat = false;
     _satFat += (n.saturatedFat100 ?? 0) * ratio;
 
-    if (n.fiber100 != null) _hasFiber = true;
+    if (n.fiber100 == null) _hasFiber = false;
     _fiber += (n.fiber100 ?? 0) * ratio;
 
-    if (n.monounsaturatedFat100 != null) _hasMonoFat = true;
+    if (n.monounsaturatedFat100 == null) _hasMonoFat = false;
     _monoFat += (n.monounsaturatedFat100 ?? 0) * ratio;
 
-    if (n.polyunsaturatedFat100 != null) _hasPolyFat = true;
+    if (n.polyunsaturatedFat100 == null) _hasPolyFat = false;
     _polyFat += (n.polyunsaturatedFat100 ?? 0) * ratio;
 
-    if (n.transFat100 != null) _hasTransFat = true;
+    if (n.transFat100 == null) _hasTransFat = false;
     _transFat += (n.transFat100 ?? 0) * ratio;
 
-    if (n.cholesterol100 != null) _hasCholesterol = true;
+    if (n.cholesterol100 == null) _hasCholesterol = false;
     _cholesterol += (n.cholesterol100 ?? 0) * ratio;
 
-    if (n.sodium100 != null) _hasSodium = true;
+    if (n.sodium100 == null) _hasSodium = false;
     _sodium += (n.sodium100 ?? 0) * ratio;
 
-    if (n.potassium100 != null) _hasPotassium = true;
+    if (n.potassium100 == null) _hasPotassium = false;
     _potassium += (n.potassium100 ?? 0) * ratio;
 
-    if (n.magnesium100 != null) _hasMagnesium = true;
+    if (n.magnesium100 == null) _hasMagnesium = false;
     _magnesium += (n.magnesium100 ?? 0) * ratio;
 
-    if (n.calcium100 != null) _hasCalcium = true;
+    if (n.calcium100 == null) _hasCalcium = false;
     _calcium += (n.calcium100 ?? 0) * ratio;
 
-    if (n.iron100 != null) _hasIron = true;
+    if (n.iron100 == null) _hasIron = false;
     _iron += (n.iron100 ?? 0) * ratio;
 
-    if (n.zinc100 != null) _hasZinc = true;
+    if (n.zinc100 == null) _hasZinc = false;
     _zinc += (n.zinc100 ?? 0) * ratio;
 
-    if (n.phosphorus100 != null) _hasPhosphorus = true;
+    if (n.phosphorus100 == null) _hasPhosphorus = false;
     _phosphorus += (n.phosphorus100 ?? 0) * ratio;
 
-    if (n.vitaminA100 != null) _hasVitA = true;
+    if (n.vitaminA100 == null) _hasVitA = false;
     _vitA += (n.vitaminA100 ?? 0) * ratio;
 
-    if (n.vitaminC100 != null) _hasVitC = true;
+    if (n.vitaminC100 == null) _hasVitC = false;
     _vitC += (n.vitaminC100 ?? 0) * ratio;
 
-    if (n.vitaminD100 != null) _hasVitD = true;
+    if (n.vitaminD100 == null) _hasVitD = false;
     _vitD += (n.vitaminD100 ?? 0) * ratio;
 
-    if (n.vitaminB6100 != null) _hasVitB6 = true;
+    if (n.vitaminB6100 == null) _hasVitB6 = false;
     _vitB6 += (n.vitaminB6100 ?? 0) * ratio;
 
-    if (n.vitaminB12100 != null) _hasVitB12 = true;
+    if (n.vitaminB12100 == null) _hasVitB12 = false;
     _vitB12 += (n.vitaminB12100 ?? 0) * ratio;
 
-    if (n.niacin100 != null) _hasNiacin = true;
+    if (n.niacin100 == null) _hasNiacin = false;
     _niacin += (n.niacin100 ?? 0) * ratio;
   }
 
   MealNutrimentsEntity toEntityPerHundredG(double totalWeightG) {
-    double? norm(double sum, bool anyPresent) =>
-        anyPresent ? sum * 100 / totalWeightG : null;
+    double? norm(double sum, bool allPresent) =>
+        allPresent ? sum * 100 / totalWeightG : null;
 
     return MealNutrimentsEntity(
       energyKcal100: norm(_energyKcal, _hasEnergy),
